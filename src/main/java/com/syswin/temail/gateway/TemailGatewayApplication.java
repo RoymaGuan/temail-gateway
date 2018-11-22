@@ -9,13 +9,13 @@ import com.syswin.temail.gateway.service.AuthService;
 import com.syswin.temail.gateway.service.AuthServiceHttpClientAsync;
 import com.syswin.temail.gateway.service.DispatchService;
 import com.syswin.temail.gateway.service.DispatchServiceHttpClientAsync;
-import com.syswin.temail.gateway.service.RemoteStatusService;
+import com.syswin.temail.gateway.service.RemoteStatusServiceImpl;
 import com.syswin.temail.gateway.service.RequestServiceImpl;
 import com.syswin.temail.gateway.service.SessionServiceImpl;
 import com.syswin.temail.ps.server.GatewayServer;
 import com.syswin.temail.ps.server.service.AbstractSessionService;
-import com.syswin.temail.ps.server.service.ChannelHolder;
 import com.syswin.temail.ps.server.service.RequestService;
+import com.syswin.temail.ps.server.service.channels.strategy.ChannelManager;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.nio.client.HttpAsyncClient;
 import org.springframework.boot.SpringApplication;
@@ -54,11 +54,11 @@ public class TemailGatewayApplication {
   public AbstractSessionService sessionService(TemailGatewayProperties properties, AuthService authService,
       ChannelsSyncClient channelsSyncClient) {
     return new SessionServiceImpl(authService,
-        new RemoteStatusService(properties, channelsSyncClient));
+        new RemoteStatusServiceImpl(properties, channelsSyncClient));
   }
 
   @Bean
-  ChannelHolder channelHolder(AbstractSessionService sessionService) {
+  ChannelManager channelHolder(AbstractSessionService sessionService) {
     return sessionService.getChannelHolder();
   }
 
@@ -90,7 +90,7 @@ public class TemailGatewayApplication {
   }
 
   @Bean
-  public RocketMqRunner rocketMqRunner(TemailGatewayProperties properties, ChannelHolder channelHolder) {
+  public RocketMqRunner rocketMqRunner(TemailGatewayProperties properties, ChannelManager channelHolder) {
     return new RocketMqRunner(properties, channelHolder);
   }
 }

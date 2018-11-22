@@ -1,7 +1,7 @@
 package com.syswin.temail.gateway.notify;
 
 import com.syswin.temail.gateway.TemailGatewayProperties;
-import com.syswin.temail.ps.server.service.ChannelHolder;
+import com.syswin.temail.ps.server.service.channels.strategy.ChannelManager;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -15,7 +15,7 @@ public class RocketMqRunner implements ApplicationRunner, Ordered {
 
   private final RocketMqConsumer consumer;
 
-  public RocketMqRunner(TemailGatewayProperties properties, ChannelHolder channelHolder) {
+  public RocketMqRunner(TemailGatewayProperties properties, ChannelManager channelHolder) {
     consumer = new RocketMqConsumer(properties,
         new TemailServerMqListener(
             new MessageHandler(channelHolder)));

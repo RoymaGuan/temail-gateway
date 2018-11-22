@@ -2,7 +2,6 @@ package com.syswin.temail.gateway.service;
 
 
 import static com.syswin.temail.ps.server.utils.SignatureUtil.resetSignature;
-
 import com.syswin.temail.gateway.entity.Response;
 import com.syswin.temail.ps.common.entity.CDTPPacket;
 import com.syswin.temail.ps.common.entity.CDTPProtoBuf.CDTPLoginResp;
@@ -10,6 +9,7 @@ import com.syswin.temail.ps.server.entity.Session;
 import com.syswin.temail.ps.server.service.AbstractSessionService;
 import java.util.Collection;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
@@ -22,15 +22,15 @@ public class SessionServiceImpl extends AbstractSessionService {
   private final Consumer<Boolean> responseConsumer = ignored -> {
   };
 
-  private final RemoteStatusService remoteStatusService;
+  private final RemoteStatusServiceImpl remoteStatusService;
 
-  public SessionServiceImpl(AuthService authService, RemoteStatusService remoteStatusService) {
+  public SessionServiceImpl(AuthService authService, RemoteStatusServiceImpl remoteStatusService) {
     this.authService = authService;
     this.remoteStatusService = remoteStatusService;
   }
 
   @Override
-  protected void loginExtAsync(CDTPPacket reqPacket, Consumer<CDTPPacket> successHandler,
+  protected void loginExtAsync(CDTPPacket reqPacket, Function<CDTPPacket,Collection<Session>> successHandler,
       Consumer<CDTPPacket> failedHandler) {
     String temail = reqPacket.getHeader().getSender();
     String deviceId = reqPacket.getHeader().getDeviceId();
@@ -43,7 +43,8 @@ public class SessionServiceImpl extends AbstractSessionService {
     authService.validSignature(reqPacket.getData(),
         response -> {
           CDTPPacket respPacket = loginSuccess(reqPacket, response);
-          successHandler.accept(respPacket);
+          Collection<Session> sessions = successHandler.apply(respPacket);
+          remoteStatusService.removeSessions(sessions, t->{});
         },
         response -> {
           CDTPPacket respPacket = loginFailure(reqPacket, response);

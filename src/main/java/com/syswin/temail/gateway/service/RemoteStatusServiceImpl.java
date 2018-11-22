@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 
 @Slf4j
-public class RemoteStatusService {
+public class RemoteStatusServiceImpl {
 
   private final TemailGatewayProperties properties;
 
@@ -31,7 +31,7 @@ public class RemoteStatusService {
       })
   );
 
-  public RemoteStatusService(TemailGatewayProperties properties, ChannelsSyncClient channelsSyncClient) {
+  public RemoteStatusServiceImpl(TemailGatewayProperties properties, ChannelsSyncClient channelsSyncClient) {
     this.channelsSyncClient = channelsSyncClient;
     this.properties = properties;
     this.pendingTaskQueue.run();
@@ -54,11 +54,11 @@ public class RemoteStatusService {
   }
 
   void removeSessions(Collection<Session> sessions, Consumer<Boolean> consumer) {
+    if(sessions == null && sessions.size() == 0) return;
     List<TemailAccoutLocation> statuses = new ArrayList<>(sessions.size());
     for (Session session : sessions) {
       statuses.add(buildAcctSts(session.getTemail(), session.getDeviceId()));
     }
-
     reqUpdSts4Upd(new TemailAccoutLocations(statuses), TemailAcctUptOptType.del, consumer);
   }
 

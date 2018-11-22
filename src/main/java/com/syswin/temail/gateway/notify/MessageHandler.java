@@ -2,13 +2,12 @@ package com.syswin.temail.gateway.notify;
 
 
 import static com.syswin.temail.ps.server.utils.SignatureUtil.resetSignature;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.syswin.temail.ps.common.entity.CDTPHeader;
 import com.syswin.temail.ps.common.entity.CDTPPacket;
-import com.syswin.temail.ps.server.service.ChannelHolder;
+import com.syswin.temail.ps.server.service.channels.strategy.ChannelManager;
 import io.netty.channel.Channel;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class MessageHandler {
 
-  private final ChannelHolder channelHolder;
+  private final ChannelManager channelHolder;
   private final Gson gson;
 
-  MessageHandler(ChannelHolder channelHolder) {
+  MessageHandler(ChannelManager channelHolder) {
     this.channelHolder = channelHolder;
     this.gson = new GsonBuilder()
         .registerTypeAdapter(CDTPPacket.class, new PacketDeserializer())
