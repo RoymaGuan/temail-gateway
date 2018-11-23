@@ -8,10 +8,8 @@ import com.syswin.temail.ps.common.entity.CDTPProtoBuf.CDTPLoginResp;
 import com.syswin.temail.ps.server.entity.Session;
 import com.syswin.temail.ps.server.service.AbstractSessionService;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
@@ -57,11 +55,11 @@ public class SessionServiceImpl extends AbstractSessionService {
   }
 
   @Override
-  protected void logoutExt(CDTPPacket reqPacket, CDTPPacket respPacket,
-      Supplier<Collection<Session>> rmedSessionsSupplier) {
-    remoteStatusService.removeSessions(rmedSessionsSupplier.get(), t -> {
-    });
-    super.logoutExt(reqPacket, respPacket, () -> Collections.emptyList());
+  protected void logoutExt(CDTPPacket reqPacket, CDTPPacket respPacket) {
+    String temail = reqPacket.getHeader().getSender();
+    String deviceId = reqPacket.getHeader().getDeviceId();
+    remoteStatusService.removeSession(temail, deviceId, responseConsumer);
+    super.logoutExt(reqPacket, respPacket);
     resetSignature(respPacket);
   }
 
