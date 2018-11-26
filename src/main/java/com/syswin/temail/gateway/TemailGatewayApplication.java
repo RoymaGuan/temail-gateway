@@ -9,7 +9,7 @@ import com.syswin.temail.gateway.service.AuthService;
 import com.syswin.temail.gateway.service.AuthServiceHttpClientAsync;
 import com.syswin.temail.gateway.service.DispatchService;
 import com.syswin.temail.gateway.service.DispatchServiceHttpClientAsync;
-import com.syswin.temail.gateway.service.RemoteStatusServiceImpl;
+import com.syswin.temail.gateway.service.RemoteStatusService;
 import com.syswin.temail.gateway.service.RequestServiceImpl;
 import com.syswin.temail.gateway.service.SessionServiceImpl;
 import com.syswin.temail.ps.server.GatewayServer;
@@ -54,7 +54,7 @@ public class TemailGatewayApplication {
   public AbstractSessionService sessionService(TemailGatewayProperties properties, AuthService authService,
       ChannelsSyncClient channelsSyncClient) {
     return new SessionServiceImpl(authService,
-        new RemoteStatusServiceImpl(properties, channelsSyncClient));
+        new RemoteStatusService(properties, channelsSyncClient));
   }
 
   @Bean

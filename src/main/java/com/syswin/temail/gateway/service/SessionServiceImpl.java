@@ -22,9 +22,9 @@ public class SessionServiceImpl extends AbstractSessionService {
   private final Consumer<Boolean> responseConsumer = ignored -> {
   };
 
-  private final RemoteStatusServiceImpl remoteStatusService;
+  private final RemoteStatusService remoteStatusService;
 
-  public SessionServiceImpl(AuthService authService, RemoteStatusServiceImpl remoteStatusService) {
+  public SessionServiceImpl(AuthService authService, RemoteStatusService remoteStatusService) {
     this.authService = authService;
     this.remoteStatusService = remoteStatusService;
   }

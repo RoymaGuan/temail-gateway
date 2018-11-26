@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 
 @Slf4j
-public class RemoteStatusServiceImpl {
+public class RemoteStatusService {
 
   private final TemailGatewayProperties properties;
 
@@ -31,7 +31,7 @@ public class RemoteStatusServiceImpl {
       })
   );
 
-  public RemoteStatusServiceImpl(TemailGatewayProperties properties, ChannelsSyncClient channelsSyncClient) {
+  public RemoteStatusService(TemailGatewayProperties properties, ChannelsSyncClient channelsSyncClient) {
     this.channelsSyncClient = channelsSyncClient;
     this.properties = properties;
     this.pendingTaskQueue.run();

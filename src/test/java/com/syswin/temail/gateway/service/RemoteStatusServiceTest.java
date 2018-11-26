@@ -29,7 +29,7 @@ public class RemoteStatusServiceTest {
 
   private final ChannelsSyncClient grpcClientWrapper = Mockito.mock(ChannelsSyncClient.class);
 
-  private final RemoteStatusServiceImpl remoteStatusService = new RemoteStatusServiceImpl(properties, grpcClientWrapper);
+  private final RemoteStatusService remoteStatusService = new RemoteStatusService(properties, grpcClientWrapper);
 
   private final List<Session> sessions = new ArrayList<>();
 
@@ -88,21 +88,21 @@ public class RemoteStatusServiceTest {
   public void testAddSession() {
     //for testing addSession
     remoteStatusService.reqUpdSts4Upd(temailAccoutLocationsSingle,
-        RemoteStatusServiceImpl.TemailAcctUptOptType.add, results::add);
+        RemoteStatusService.TemailAcctUptOptType.add, results::add);
     Awaitility.waitAtMost(1, TimeUnit.SECONDS).until(() -> {
       return results.remove(0);
     });
 
     //for testing removeSession
     remoteStatusService.reqUpdSts4Upd(temailAccoutLocationsBatch,
-        RemoteStatusServiceImpl.TemailAcctUptOptType.del, results::add);
+        RemoteStatusService.TemailAcctUptOptType.del, results::add);
     Awaitility.waitAtMost(1, TimeUnit.SECONDS).until(() -> {
       return results.remove(0);
     });
 
     //for testing removeSessions
     remoteStatusService.reqUpdSts4Upd(temailAccoutLocationsBatch,
-        RemoteStatusServiceImpl.TemailAcctUptOptType.del, results::add);
+        RemoteStatusService.TemailAcctUptOptType.del, results::add);
     Awaitility.waitAtMost(1, TimeUnit.SECONDS).until(() -> results.remove(0));
 
   }

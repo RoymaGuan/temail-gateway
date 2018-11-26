@@ -1,7 +1,7 @@
 package com.syswin.temail.gateway.service;
 
 import com.syswin.temail.gateway.entity.TemailAccoutLocations;
-import com.syswin.temail.gateway.service.RemoteStatusServiceImpl.TemailAcctUptOptType;
+import com.syswin.temail.gateway.service.RemoteStatusService.TemailAcctUptOptType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
