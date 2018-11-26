@@ -54,7 +54,7 @@ public class RemoteStatusService {
   }
 
   void removeSessions(Collection<Session> sessions, Consumer<Boolean> consumer) {
-    if(sessions == null && sessions.size() == 0) return;
+    if(sessions.isEmpty()) return;
     List<TemailAccoutLocation> statuses = new ArrayList<>(sessions.size());
     for (Session session : sessions) {
       statuses.add(buildAcctSts(session.getTemail(), session.getDeviceId()));
