@@ -35,7 +35,7 @@ class RocketMqConsumer {
     consumer.setMessageListener(messageListener);
     consumer.start();
 
-    log.info("推送队列监听程序已经启动，开始监听mqTopic:{}, mqTag:{} 队列中的信息！",
+    log.info("MQ consumer listener is initlized. listening at mqTopic:{}, mqTag:{}",
         rocketmq.getMqTopic(), properties.getInstance().getMqTag());
   }
 

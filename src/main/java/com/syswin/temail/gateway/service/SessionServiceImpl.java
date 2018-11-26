@@ -36,7 +36,7 @@ public class SessionServiceImpl extends AbstractSessionService {
     String deviceId = reqPacket.getHeader().getDeviceId();
     if (!StringUtils.hasText(temail) || !StringUtils.hasText(deviceId)) {
       CDTPPacket respPacket = loginFailure(reqPacket,
-          Response.failed(HttpStatus.BAD_REQUEST, "temail或者deviceId为空！"));
+          Response.failed(HttpStatus.BAD_REQUEST, "temail or deviceId is null！"));
       failedHandler.accept(respPacket);
       return;
     }

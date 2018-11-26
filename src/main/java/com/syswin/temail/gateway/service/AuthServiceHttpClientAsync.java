@@ -68,7 +68,7 @@ public class AuthServiceHttpClientAsync implements AuthService {
 
       @Override
       public void cancelled() {
-        throw new UnsupportedOperationException("暂时不支持取消操作");
+        throw new UnsupportedOperationException("unsupported operation");
       }
     });
   }

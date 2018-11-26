@@ -41,7 +41,7 @@ class LocalMachineUtil {
         }
       }
     } catch (SocketException ex) {
-      log.error("获取本机IP失败", ex);
+      log.error("fail to get local ip.", ex);
     }
     ipLocalAddr = ipLocalAddr.replace(".", "-");
     return ipLocalAddr;
@@ -55,7 +55,7 @@ class LocalMachineUtil {
       localIp = addr.getHostAddress(); // 获取本机ip
       localIp = localIp.replace(".", "-");
     } catch (Exception ex) {
-      log.error("获取本机IP失败", ex);
+      log.error("fail to get local ip", ex);
       localIp = DEFAULT_IP;
     }
     return localIp;

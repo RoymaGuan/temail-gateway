@@ -28,7 +28,7 @@ public class YHCClientResponseHandler extends SimpleChannelInboundHandler<CDTPPa
 
   @Override
   protected void channelRead0(ChannelHandlerContext channelHandlerContext, CDTPPacket packet) {
-    log.info("从服务器端收到的信息：{}", packet);
+    log.info("packet received from server is：{}", packet);
     newResult = true;
     result = packet;
   }

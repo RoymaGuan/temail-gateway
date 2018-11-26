@@ -27,7 +27,7 @@ class MessageHandler {
 
   void onMessageReceived(String message) {
     try {
-      log.debug("从MQ接受到消息: {}", message);
+      log.debug("receive message: {} from MQ.", message);
       CDTPPacket packet = gson.fromJson(message, CDTPPacket.class);
       CDTPHeader header = packet.getHeader();
       // 对于通知消息，重新生成packetId，避免跟请求的返回消息重复而产生错误
@@ -37,11 +37,11 @@ class MessageHandler {
       String receiver = header.getReceiver();
       Iterable<Channel> channels = channelHolder.getChannels(receiver);
       for (Channel channel : channels) {
-        log.debug("当前推送的通道信息：{}，推送的内容信息：{}", channel, packet);
+        log.debug("write MQ message:{} to channel：{}", packet, channel);
         channel.writeAndFlush(packet, channel.voidPromise());
       }
     } catch (JsonSyntaxException e) {
-      log.error("接收到不符合格式的消息：{}", message, e);
+      log.error("fail to parse MQ message by json parser, message：{}", message, e);
     }
   }
 }

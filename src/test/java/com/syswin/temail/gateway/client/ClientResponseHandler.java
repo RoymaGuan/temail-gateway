@@ -25,7 +25,7 @@ public class ClientResponseHandler extends SimpleChannelInboundHandler<CDTPPacke
 
   @Override
   protected void channelRead0(ChannelHandlerContext channelHandlerContext, CDTPPacket packet) {
-    log.debug("从服务器端收到的信息：{}", packet);
+    log.debug("receive packet: {} from server", packet);
     result = packet;
     receivedMessages.offer(packet);
   }

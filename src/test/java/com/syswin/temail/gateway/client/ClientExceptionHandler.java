@@ -15,7 +15,7 @@ public class ClientExceptionHandler extends ChannelInboundHandlerAdapter {
 
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-    log.error("数据处理异常", cause);
+    log.error("exception happened while client trying to handle packet.", cause);
   }
 
 }

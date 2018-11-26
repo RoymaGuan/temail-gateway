@@ -29,7 +29,7 @@ public class RequestServiceImpl implements RequestService {
           responseHandler.accept(reqPacket);
         },
         t -> {
-          log.error("调用dispatcher请求出错", t);
+          log.error("fail to call dispatcher server. ", t);
           errorPacket(reqPacket, INTERNAL_ERROR.getCode(), t.getMessage());
           resetSignature(reqPacket);
           responseHandler.accept(reqPacket);

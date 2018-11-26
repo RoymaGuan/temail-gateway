@@ -56,7 +56,7 @@ public class DispatchServiceHttpClientAsync implements DispatchService {
 
       @Override
       public void cancelled() {
-        throw new UnsupportedOperationException("暂时不支持取消操作");
+        throw new UnsupportedOperationException("unsupported operation");
       }
     });
   }
