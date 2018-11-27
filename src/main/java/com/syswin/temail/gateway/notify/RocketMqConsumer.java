@@ -35,7 +35,7 @@ class RocketMqConsumer {
     consumer.setMessageListener(messageListener);
     consumer.start();
 
-    log.info("MQ consumer listener is initlized. listening at mqTopic:{}, mqTag:{}",
+    log.info("MQ consumer listener is initialized. Listening on mqTopic:{}, mqTag:{}",
         rocketmq.getMqTopic(), properties.getInstance().getMqTag());
   }
 

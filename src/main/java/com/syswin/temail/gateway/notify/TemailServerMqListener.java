@@ -25,7 +25,7 @@ class TemailServerMqListener implements MessageListenerConcurrently {
       }
       return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
     } catch (Exception ex) {
-      log.error("fail to write MQ message to channels, message：{}", messages, ex);
+      log.error("Fail to write MQ message to channels, message：{}", messages, ex);
       return ConsumeConcurrentlyStatus.RECONSUME_LATER;
     }
   }

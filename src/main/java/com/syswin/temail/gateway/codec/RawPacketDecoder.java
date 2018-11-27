@@ -30,7 +30,7 @@ public abstract class RawPacketDecoder extends ByteToMessageDecoder {
 
     list.add(packet);
     if (!packet.isHeartbeat() && log.isDebugEnabled()) {
-      log.debug("from channel:{} wo obtain packet：CommandSpace={},Command={},CDTPHeader={}",
+      log.debug("From channel:{} read packet：CommandSpace={},Command={},CDTPHeader={}",
           ctx.channel(),
           packet.getCommandSpace(),
           packet.getCommand(),
@@ -45,7 +45,7 @@ public abstract class RawPacketDecoder extends ByteToMessageDecoder {
   private void readCommandSpace(ByteBuf byteBuf, CDTPPacket packet) {
     short commandSpace = byteBuf.readShort();
     if (commandSpace < 0) {
-      throw new PacketException("illegal commandSpace: {}" + commandSpace);
+      throw new PacketException("CommandSpace must be positive, but actual was " + commandSpace);
     }
     packet.setCommandSpace(commandSpace);
   }
@@ -53,7 +53,7 @@ public abstract class RawPacketDecoder extends ByteToMessageDecoder {
   private void readCommand(ByteBuf byteBuf, CDTPPacket packet) {
     short command = byteBuf.readShort();
     if (command <= 0) {
-      throw new PacketException("illegal command: {}" + command);
+      throw new PacketException("Command must be positive, but actual was " + command);
     }
     packet.setCommand(command);
   }
@@ -67,21 +67,21 @@ public abstract class RawPacketDecoder extends ByteToMessageDecoder {
     short headerLength = byteBuf.readShort();
     CDTPProtoBuf.CDTPHeader cdtpHeader;
     if (headerLength < 0) {
-      throw new PacketException("error headerLength: {}" + headerLength);
+      throw new PacketException("Negative headerLength: " + headerLength);
     }
 
     if (headerLength > 0) {
       if (byteBuf.readableBytes() < headerLength) {
-        throw new PacketException("the actual data length is less than headerLength, headerLength:{}" + headerLength
-            + ", actual length: {}" + byteBuf.readableBytes());
+        throw new PacketException("The packet length is less than headerLength, headerLength=" + headerLength
+            + ", packetLength=" + byteBuf.readableBytes());
       }
       byte[] headerBytes = new byte[headerLength];
       byteBuf.readBytes(headerBytes);
       try {
         cdtpHeader = CDTPProtoBuf.CDTPHeader.parseFrom(headerBytes);
       } catch (InvalidProtocolBufferException e) {
-        log.error("failed to decode packet", e);
-        throw new PacketException("packet decode error" + e.getMessage());
+        log.error("Failed to decode packet", e);
+        throw new PacketException("Packet decode error" + e.getMessage());
       }
       packet.setHeader(new CDTPHeader(cdtpHeader));
     }
