@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import au.com.dius.pact.consumer.MessagePactBuilder;
 import au.com.dius.pact.consumer.MessagePactProviderRule;
 import au.com.dius.pact.consumer.Pact;
@@ -16,7 +15,7 @@ import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.model.v3.messaging.MessagePact;
 import com.syswin.temail.ps.common.entity.CDTPPacket;
 import com.syswin.temail.ps.common.entity.CDTPPacketTrans;
-import com.syswin.temail.ps.server.service.ChannelHolder;
+import com.syswin.temail.ps.server.service.channels.strategy.ChannelManager;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPromise;
 import java.util.HashMap;
@@ -36,7 +35,7 @@ public class MessageHandlerConsumerTest {
 
   private final ChannelPromise promise = Mockito.mock(ChannelPromise.class);
   private final Channel channel = Mockito.mock(Channel.class);
-  private final ChannelHolder channelHolder = Mockito.mock(ChannelHolder.class);
+  private final ChannelManager channelHolder = Mockito.mock(ChannelManager.class);
 
   private final String recipient = "sean@t.email";
   private final CDTPPacketTrans payload = mqMsgPayload(recipient, "bonjour");
