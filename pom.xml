@@ -15,7 +15,7 @@
 
 
   <properties>
-    <ps.version>1.2.6</ps.version>
+    <ps.version>1.2.8</ps.version>
     <disconf-spring-boot-starter.version>1.0.0</disconf-spring-boot-starter.version>
 
     <netty.version>4.1.27.Final</netty.version>

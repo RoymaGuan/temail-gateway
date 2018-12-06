@@ -59,7 +59,7 @@ public class MessageHandlerConsumerTest {
   @PactVerification({"Able to process online notification message"})
   public void test() {
     when(channel.voidPromise()).thenReturn(promise);
-    when(channelHolder.getChannels(recipient)).thenReturn(singletonList(channel));
+    when(channelHolder.getChannelsExceptSender(recipient,"deviceId11")).thenReturn(singletonList(channel));
 
     MessageHandler messageHandler = new MessageHandler(channelHolder);
 

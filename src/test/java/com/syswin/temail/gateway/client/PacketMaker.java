@@ -3,7 +3,6 @@ package com.syswin.temail.gateway.client;
 import static com.syswin.temail.ps.common.Constants.CDTP_VERSION;
 import static com.syswin.temail.ps.common.entity.CommandSpaceType.CHANNEL_CODE;
 import static com.syswin.temail.ps.common.entity.CommandSpaceType.SINGLE_MESSAGE_CODE;
-
 import com.google.gson.Gson;
 import com.syswin.temail.gateway.entity.Response;
 import com.syswin.temail.ps.common.entity.CDTPHeader;
@@ -105,6 +104,7 @@ public class PacketMaker {
     payload.setVersion(CDTP_VERSION);
     CDTPHeader header = new CDTPHeader();
     header.setReceiver(recipient);
+    header.setDeviceId("deviceId1");
     header.setSignature(UUID.randomUUID().toString());
     payload.setHeader(header);
     payload.setData(Base64.getUrlEncoder().encode(gson.toJson(body).getBytes()));
