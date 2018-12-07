@@ -35,7 +35,8 @@ class MessageHandler {
       resetSignature(packet);
 
       String receiver = header.getReceiver();
-      Iterable<Channel> channels = channelHolder.getChannelsExceptSender(receiver, header.getDeviceId());
+      Iterable<Channel> channels = channelHolder
+          .getChannelsExceptSenderN(receiver, header.getSender(), header.getDeviceId());
       for (Channel channel : channels) {
         log.debug("Wrote MQ message:{} to channel：{}", packet, channel);
         channel.writeAndFlush(packet, channel.voidPromise());
