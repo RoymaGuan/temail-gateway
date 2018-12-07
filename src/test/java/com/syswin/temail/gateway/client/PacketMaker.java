@@ -105,6 +105,7 @@ public class PacketMaker {
     CDTPHeader header = new CDTPHeader();
     header.setReceiver(recipient);
     header.setDeviceId("deviceId1");
+    header.setSender("jack@.email");
     header.setSignature(UUID.randomUUID().toString());
     payload.setHeader(header);
     payload.setData(Base64.getUrlEncoder().encode(gson.toJson(body).getBytes()));

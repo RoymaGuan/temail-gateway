@@ -38,6 +38,7 @@ public class MessageHandlerConsumerTest {
   private final ChannelManager channelHolder = Mockito.mock(ChannelManager.class);
 
   private final String recipient = "sean@t.email";
+  private final String sender = "jack@.email";
   private final CDTPPacketTrans payload = mqMsgPayload(recipient, "bonjour");
   private byte[] currentMessage;
 
@@ -59,7 +60,7 @@ public class MessageHandlerConsumerTest {
   @PactVerification({"Able to process online notification message"})
   public void test() {
     when(channel.voidPromise()).thenReturn(promise);
-    when(channelHolder.getChannelsExceptSender(recipient,"deviceId1")).thenReturn(singletonList(channel));
+    when(channelHolder.getChannelsExceptSenderN(recipient, sender, "deviceId1")).thenReturn(singletonList(channel));
 
     MessageHandler messageHandler = new MessageHandler(channelHolder);
 
