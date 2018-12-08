@@ -32,8 +32,8 @@ public abstract class RawPacketDecoder extends ByteToMessageDecoder {
     if (!packet.isHeartbeat() && log.isDebugEnabled()) {
       log.debug("From channel:{} read packet：CommandSpace={},Command={},CDTPHeader={}",
           ctx.channel(),
-          packet.getCommandSpace(),
-          packet.getCommand(),
+          Integer.toHexString(packet.getCommandSpace()),
+          Integer.toHexString(packet.getCommand()),
           packet.getHeader());
     }
   }
