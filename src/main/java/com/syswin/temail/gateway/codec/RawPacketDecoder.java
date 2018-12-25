@@ -8,6 +8,7 @@ import com.syswin.temail.ps.common.exception.PacketException;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import java.util.Arrays;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,11 +31,12 @@ public abstract class RawPacketDecoder extends ByteToMessageDecoder {
 
     list.add(packet);
     if (!packet.isHeartbeat() && log.isDebugEnabled()) {
-      log.debug("From channel:{} read packet：CommandSpace={},Command={},CDTPHeader={}",
+      log.debug("From channel:{} read packet：CommandSpace={},Command={},CDTPHeader={},data={}",
           ctx.channel(),
           Integer.toHexString(packet.getCommandSpace()),
           Integer.toHexString(packet.getCommand()),
-          packet.getHeader());
+          packet.getHeader(),
+          Arrays.toString(packet.getData() != null ? packet.getData() : new byte[]{}));
     }
   }
 
