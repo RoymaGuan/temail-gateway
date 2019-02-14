@@ -38,7 +38,7 @@ class MessageHandler {
       Iterable<Channel> channels = channelHolder
           .getChannelsExceptSenderN(receiver, header.getSender(), header.getDeviceId());
       for (Channel channel : channels) {
-        log.debug("Wrote MQ message:{} to channel：{}", packet, channel);
+        log.info("Wrote MQ message:{} to channel：{}", packet, channel);
         channel.writeAndFlush(packet, channel.voidPromise());
       }
     } catch (JsonSyntaxException e) {
