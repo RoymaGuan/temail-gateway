@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -24,8 +23,7 @@ public class TemailGatewayProperties {
   private Netty netty = new Netty();
   private HttpClient httpClient = new HttpClient();
 
-  @Autowired
-  private Rocketmq rocketmq;
+  private Rocketmq rocketmq = new Rocketmq();
   private Instance instance = new Instance();
 
   @Data
@@ -36,9 +34,6 @@ public class TemailGatewayProperties {
   }
 
   @Data
-  @Component
-  @AllArgsConstructor
-  @NoArgsConstructor
   @ConfigurationProperties(prefix = "app.gateway.rocketmq")
   public static class Rocketmq {
     private String namesrvAddr;
