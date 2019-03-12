@@ -37,7 +37,7 @@ public class TemailGatewayProperties {
 
   @Data
   @Component
-  @ConfigurationProperties(prefix = "spring.rocketmq")
+  @ConfigurationProperties(prefix = "app.gateway.rocketmq")
   public static class Rocketmq {
 
     private String namesrvAddr;
