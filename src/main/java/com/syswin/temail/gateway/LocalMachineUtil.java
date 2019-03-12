@@ -8,11 +8,11 @@ import java.util.Enumeration;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-class LocalMachineUtil {
+public class LocalMachineUtil {
 
   private static final String DEFAULT_IP = "127-0-0-1";
 
-  static String getLocalIp() {
+  public static String getLocalIp() {
     String osName = System.getProperty("os.name"); // 获取系统名称
     if (osName != null && osName.startsWith("Windows")) { // 如果是Windows系统
       return getWindowsIp();
