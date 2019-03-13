@@ -1,10 +1,8 @@
 package com.syswin.temail.gateway;
 
 import java.util.UUID;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -56,9 +54,8 @@ public class TemailGatewayProperties {
 
   }
 
+  @Data
   @Getter
-  @AllArgsConstructor
-  @NoArgsConstructor
   public static class HttpClient {
     private int maxConnectionsPerRoute = 1000;
     private int maxConnectionsTotal = 3000;

@@ -1,9 +1,9 @@
 package com.syswin.temail.gateway.service;
 
 import static org.apache.http.entity.ContentType.APPLICATION_OCTET_STREAM;
-
 import com.google.gson.Gson;
 import com.syswin.temail.gateway.entity.Response;
+import com.syswin.temail.gateway.http.AbstractHttpCall;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
@@ -13,23 +13,22 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.nio.client.HttpAsyncClient;
 import org.apache.http.util.EntityUtils;
 import org.springframework.http.HttpStatus;
 
 public class AuthServiceHttpClientAsync implements AuthService {
 
-  private final HttpAsyncClient asyncClient;
+  private final AbstractHttpCall asyncClient;
   private final String authUrl;
   private final Function<byte[], HttpEntity> httpEntitySupplier;
   private final Gson gson = new Gson();
 
-  public AuthServiceHttpClientAsync(String authUrl, HttpAsyncClient asyncClient) {
+  public AuthServiceHttpClientAsync(String authUrl, AbstractHttpCall asyncClient) {
     this(authUrl, asyncClient, bytes -> new ByteArrayEntity(bytes, APPLICATION_OCTET_STREAM));
   }
 
   AuthServiceHttpClientAsync(String authUrl,
-      HttpAsyncClient asyncClient,
+      AbstractHttpCall asyncClient,
       Function<byte[], HttpEntity> httpEntitySupplier) {
     this.asyncClient = asyncClient;
     this.authUrl = authUrl;

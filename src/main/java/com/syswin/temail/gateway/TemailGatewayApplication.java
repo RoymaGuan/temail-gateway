@@ -4,6 +4,8 @@ import com.syswin.temail.gateway.channels.ChannelsSyncClient;
 import com.syswin.temail.gateway.channels.clients.grpc.GrpcClientWrapper;
 import com.syswin.temail.gateway.codec.FullPacketAwareDecoder;
 import com.syswin.temail.gateway.codec.RawPacketEncoder;
+import com.syswin.temail.gateway.http.AbstractHttpCall;
+import com.syswin.temail.gateway.http.AsyncHttpCall;
 import com.syswin.temail.gateway.notify.RocketMqRunner;
 import com.syswin.temail.gateway.service.AuthService;
 import com.syswin.temail.gateway.service.AuthServiceHttpClientAsync;
@@ -16,8 +18,6 @@ import com.syswin.temail.ps.server.GatewayServer;
 import com.syswin.temail.ps.server.service.AbstractSessionService;
 import com.syswin.temail.ps.server.service.RequestService;
 import com.syswin.temail.ps.server.service.channels.strategy.ChannelManager;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.http.nio.client.HttpAsyncClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -32,11 +32,8 @@ public class TemailGatewayApplication {
   }
 
   @Bean(initMethod = "start", destroyMethod = "close")
-  HttpAsyncClient asyncClient(TemailGatewayProperties properties) {
-    return HttpAsyncClientBuilder.create()
-        .setMaxConnPerRoute(properties.getHttpClient().getMaxConnectionsPerRoute())
-        .setMaxConnTotal(properties.getHttpClient().getMaxConnectionsTotal())
-        .build();
+  AbstractHttpCall asyncClient(TemailGatewayProperties properties) {
+    return new AsyncHttpCall(properties);
   }
 
   @Profile("!dev")
@@ -46,7 +43,7 @@ public class TemailGatewayApplication {
   }
 
   @Bean
-  public AuthService loginService(TemailGatewayProperties properties, HttpAsyncClient asyncClient) {
+  public AuthService loginService(TemailGatewayProperties properties, AbstractHttpCall asyncClient) {
     return new AuthServiceHttpClientAsync(properties.getVerifyUrl(), asyncClient);
   }
 
@@ -63,9 +60,7 @@ public class TemailGatewayApplication {
   }
 
   @Bean
-  public DispatchService dispatchService(TemailGatewayProperties properties, HttpAsyncClient asyncClient) {
-    // 由于Skywalking不支持WebClient的方式，因此改为HttpClient
-    // return new DispatchServiceWebClient(properties.getDispatchUrl());
+  public DispatchService dispatchService(TemailGatewayProperties properties, AbstractHttpCall asyncClient) {
     return new DispatchServiceHttpClientAsync(properties.getDispatchUrl(), asyncClient);
   }
 
