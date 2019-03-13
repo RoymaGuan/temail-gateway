@@ -11,23 +11,19 @@
   <groupId>com.syswin.temail</groupId>
   <artifactId>temail-gateway</artifactId>
   <version>1.1.6-SNAPSHOT</version>
-  <packaging>jar</packaging>
-
+  <packaging>${packaging.type}</packaging>
 
   <properties>
     <ps.version>1.2.13</ps.version>
     <disconf-spring-boot-starter.version>1.0.0</disconf-spring-boot-starter.version>
-
     <netty.version>4.1.27.Final</netty.version>
     <disconf-client.version>2.6.36</disconf-client.version>
     <rocketmq-client.version>4.3.0</rocketmq-client.version>
     <zookeeper.version>3.3.6</zookeeper.version>
     <protobuf-java.version>3.6.1</protobuf-java.version>
-
     <pact.version>3.5.20</pact.version>
     <awaitility.version>3.0.0</awaitility.version>
     <unit-scaffolding.version>1.0.0</unit-scaffolding.version>
-
     <!--grpc相关-->
     <grpc.version>1.15.0</grpc.version>
     <protobuf.version>3.5.1</protobuf.version>
@@ -145,7 +141,6 @@
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpasyncclient</artifactId>
     </dependency>
-
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
@@ -225,7 +220,6 @@
       <artifactId>assertj-core</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>com.github.tomakehurst</groupId>
       <artifactId>wiremock-standalone</artifactId>
@@ -286,15 +280,64 @@
       <version>${awaitility.version}</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-testing</artifactId>
       <version>${grpc.version}</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>jar</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <packaging.type>jar</packaging.type>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>war</id>
+      <properties>
+        <packaging.type>war</packaging.type>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-web</artifactId>
+          <exclusions>
+            <exclusion>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-tomcat</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-war-plugin</artifactId>
+            <configuration>
+              <failOnMissingWebXml>false</failOnMissingWebXml>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <build>
     <resources>
