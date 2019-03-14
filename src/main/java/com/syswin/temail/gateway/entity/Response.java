@@ -60,4 +60,10 @@ public class Response<T> {
     return new Response<>(status, message, body);
   }
 
+  public static <T> Response<T> response(HttpStatus status, String message, T body) {
+    return new Response<>(status, message, body);
+  }
+
+
+
 }
