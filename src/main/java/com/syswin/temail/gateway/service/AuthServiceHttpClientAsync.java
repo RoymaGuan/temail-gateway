@@ -1,6 +1,7 @@
 package com.syswin.temail.gateway.service;
 
 import static org.apache.http.entity.ContentType.APPLICATION_OCTET_STREAM;
+
 import com.google.gson.Gson;
 import com.syswin.temail.gateway.entity.Response;
 import java.io.IOException;
