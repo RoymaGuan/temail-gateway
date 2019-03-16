@@ -64,8 +64,6 @@ public class TemailGatewayApplication {
 
   @Bean
   public DispatchService dispatchService(TemailGatewayProperties properties, HttpAsyncClient asyncClient) {
-    // 由于Skywalking不支持WebClient的方式，因此改为HttpClient
-    // return new DispatchServiceWebClient(properties.getDispatchUrl());
     return new DispatchServiceHttpClientAsync(properties.getDispatchUrl(), asyncClient);
   }
 

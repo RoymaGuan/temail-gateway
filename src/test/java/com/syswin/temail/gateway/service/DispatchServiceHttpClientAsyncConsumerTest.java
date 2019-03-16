@@ -1,7 +1,6 @@
 package com.syswin.temail.gateway.service;
 
 import static org.apache.http.entity.ContentType.APPLICATION_OCTET_STREAM;
-
 import java.util.Base64;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
