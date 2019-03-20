@@ -28,7 +28,7 @@ import org.mockito.Mockito;
 
 
 @Slf4j
-public class MessageHandlerConsumerTest {
+public class AsyncConcurrentlyMessageHandlerTemplateConsumerTest {
 
   @Rule
   public final MessagePactProviderRule mockProvider = new MessagePactProviderRule(this);
@@ -62,10 +62,10 @@ public class MessageHandlerConsumerTest {
     when(channel.voidPromise()).thenReturn(promise);
     when(channelHolder.getChannelsExceptSenderN(recipient, sender, "deviceId1")).thenReturn(singletonList(channel));
 
-    MessageHandler messageHandler = new MessageHandler(channelHolder);
+    ConcurrentlyMessageHandler asyncConcurrentlyMessageHandler = new ConcurrentlyMessageHandler(channelHolder);
 
     String msg = new String(currentMessage);
-    messageHandler.onMessageReceived(msg);
+    asyncConcurrentlyMessageHandler.onMessageReceived(msg);
 
     verify(channel).writeAndFlush(argThat(matchesPayload(payload)), same(promise));
   }

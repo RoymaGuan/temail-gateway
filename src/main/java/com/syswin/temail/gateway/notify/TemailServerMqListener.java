@@ -10,10 +10,10 @@ import org.apache.rocketmq.common.message.MessageExt;
 @Slf4j
 class TemailServerMqListener implements MessageListenerConcurrently {
 
-  private final MessageHandler messageHandler;
+  private final MessageHandlerTemplate messageHandlerTemplate;
 
-  TemailServerMqListener(MessageHandler messageHandler) {
-    this.messageHandler = messageHandler;
+  TemailServerMqListener(MessageHandlerTemplate messageHandlerTemplate) {
+    this.messageHandlerTemplate = messageHandlerTemplate;
   }
 
   @Override
@@ -21,7 +21,7 @@ class TemailServerMqListener implements MessageListenerConcurrently {
       ConsumeConcurrentlyContext context) {
     try {
       for (MessageExt msg : messages) {
-        messageHandler.onMessageReceived(new String(msg.getBody()));
+        messageHandlerTemplate.onMessageReceived(new String(msg.getBody()));
       }
       return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
     } catch (Exception ex) {
@@ -29,5 +29,4 @@ class TemailServerMqListener implements MessageListenerConcurrently {
       return ConsumeConcurrentlyStatus.RECONSUME_LATER;
     }
   }
-
 }
