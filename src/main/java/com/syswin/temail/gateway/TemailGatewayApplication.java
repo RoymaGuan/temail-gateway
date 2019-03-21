@@ -20,15 +20,18 @@ import org.apache.http.nio.client.HttpAsyncClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
 
 
 @SpringBootApplication
+@ComponentScan(basePackages={"com.syswin.temail","com.syswin.library.messaging"})
 public class TemailGatewayApplication {
 
   public static void main(String[] args) {
     SpringApplication.run(TemailGatewayApplication.class, args);
   }
+
 
   @Bean(initMethod = "start", destroyMethod = "close")
   HttpAsyncClient asyncClient(TemailGatewayProperties properties) {

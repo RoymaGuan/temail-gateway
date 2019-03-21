@@ -30,7 +30,7 @@ public abstract class RawPacketDecoder extends ByteToMessageDecoder {
     readData(byteBuf, packet, packetLength, headerLength);
 
     list.add(packet);
-    if (!packet.isHeartbeat() && log.isDebugEnabled()) {
+    if (!packet.isHeartbeat()) {
       log.info("From channel:{} read packet：CommandSpace={},Command={},CDTPHeader={},data={}",
           ctx.channel(),
           Integer.toHexString(packet.getCommandSpace()),

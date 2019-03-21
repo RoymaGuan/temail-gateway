@@ -28,7 +28,7 @@ public class RawPacketEncoder extends MessageToByteEncoder<CDTPPacket> {
     byteBuf.writeBytes(headerBytes);
     byteBuf.writeBytes(packet.getData());
 
-    if (!packet.isHeartbeat() && log.isDebugEnabled()) {
+    if (!packet.isHeartbeat()) {
       log.info("To channel: {} write data：CommandSpace={},Command={},CDTPHeader={},Data={}",
           ctx.channel(),
           Integer.toHexString(packet.getCommandSpace()),
