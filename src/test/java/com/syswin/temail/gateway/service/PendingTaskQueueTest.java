@@ -23,7 +23,7 @@ public class PendingTaskQueueTest {
   public void shouldRunAddedTask() {
     queue.run();
     queue.addTask(message);
-    waitAtMost(300, MILLISECONDS).until(() -> receivedMessages.contains(message));
+    waitAtMost(600, MILLISECONDS).until(() -> receivedMessages.contains(message));
   }
 
   @Test
@@ -38,7 +38,7 @@ public class PendingTaskQueueTest {
     queue = new PendingTaskQueue<>(100, consumer);
     queue.run();
     queue.addTask(message);
-    waitAtMost(300, MILLISECONDS).until(() -> receivedMessages.contains(message));
+    waitAtMost(600, MILLISECONDS).until(() -> receivedMessages.contains(message));
   }
 
   @Test

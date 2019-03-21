@@ -4,9 +4,6 @@ import com.syswin.temail.gateway.channels.ChannelsSyncClient;
 import com.syswin.temail.gateway.channels.clients.grpc.GrpcClientWrapper;
 import com.syswin.temail.gateway.codec.FullPacketAwareDecoder;
 import com.syswin.temail.gateway.codec.RawPacketEncoder;
-import com.syswin.temail.gateway.notify.GatewayMQConsumeRunner;
-import com.syswin.temail.gateway.notify.OrderlyMessageHandler;
-import com.syswin.temail.gateway.notify.RocketGatewayMqConsumeRunner;
 import com.syswin.temail.gateway.service.AuthService;
 import com.syswin.temail.gateway.service.AuthServiceHttpClientAsync;
 import com.syswin.temail.gateway.service.DispatchService;
@@ -87,14 +84,6 @@ public class TemailGatewayApplication {
             properties.getNetty().getPort(),
             properties.getNetty().getReadIdleTimeSeconds(),
             properties.getNetty().isEpollEnabled()));
-  }
-
-  @Bean
-  public GatewayMQConsumeRunner rocketMqRunner(TemailGatewayProperties properties, ChannelManager channelHolder) {
-    //concurrently consumer msg
-    //return new RocketGatewayMqConsumeRunner(properties, new ConcurrentlyMessageHandler(channelHolder));
-    //orderlu consume msg
-    return new RocketGatewayMqConsumeRunner(properties, new OrderlyMessageHandler(channelHolder, t->{}));
   }
 
 }
