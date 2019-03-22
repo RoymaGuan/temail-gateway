@@ -1,28 +1,13 @@
-<configuration status="INFO" monitorInterval="1800">
-  <appenders>
-    <!--控制台打印 -->
-    <Console name="CONSOLE" target="SYSTEM_OUT">
-      <PatternLayout pattern="[@project.artifactId@] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %highlight{%-5p} => %cyan{%c.%M(%F:%L)} - %m%n"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </Console>
-    <!--当日志内容达到指定范围后，以某种定义规则打包日志文件 -->
-    <RollingFile name="RollingFile" fileName="/opt/logs/@project.artifactId@.log" filePattern="/opt/logs/@project.artifactId@-logs-%d{yyyy-MM-dd}-%i.log">
-      <PatternLayout pattern="[@project.artifactId@] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5p => %c - %m%n"/>
-      <Policies>
-        <TimeBasedTriggeringPolicy/>
-        <SizeBasedTriggeringPolicy size="50MB"/><!--当日志大小达到50MB时，以上述filePattern定义的格式进行打包压缩 -->
-      </Policies>
-      <DefaultRolloverStrategy max="20"/><!--压缩包数量不超过20-->
-    </RollingFile>
-    <!-- 异步输出文件 -->
-    <Async name="Async">
-      <AppenderRef ref="RollingFile"/>
-    </Async>
-  </appenders>
-  <loggers>
-    <root level="info">
-      <appender-ref ref="CONSOLE"/>
-      <appender-ref ref="Async"/>
-    </root>
-    <logger name="com.syswin.temail.gateway" level="debug"/>
-  </loggers>
-</configuration>
+  </Appenders>
+  <Loggers>
+    <Root level="info">
+      <AppenderRef ref="Console"/>
+    </Root>
+  </Loggers>
+</Configuration>
