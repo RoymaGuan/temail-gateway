@@ -37,7 +37,7 @@ public class OrderlyMessageHandler extends MessageHandlerTemplate {
         @Override
         public void run() {
           log.info("Start packet async write back process.");
-          while (true) {
+          while (!Thread.currentThread().isInterrupted()) {
             try {
               CDTPPacket packet = packetLocalCache.take();
               CDTPHeader header = packet.getHeader();

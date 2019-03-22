@@ -25,7 +25,7 @@ public class GrpcConcurrentTaskOnLine implements Runnable {
     //sleep leave us time to check reconnect log
     grpcConcrData.init4Test();
     grpcConcrData.grpcClientWrapper.initClient();
-    while (true) {
+    while (!Thread.currentThread().isInterrupted()) {
       try {
         for (int i = 0; i < grpcConcrData.temailAccoutLocations.size(); i++) {
           grpcConcrData.grpcClientWrapper.syncChannelLocations(grpcConcrData.temailAccoutLocations.get(i));
@@ -35,6 +35,7 @@ public class GrpcConcurrentTaskOnLine implements Runnable {
         }
         TimeUnit.MILLISECONDS.sleep(100 + RANDOM.nextInt(100));
       } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
         e.printStackTrace();
       }
     }
