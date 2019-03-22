@@ -74,7 +74,7 @@ public class OrderlyMessageHandlerTest {
 
   @Test
   public void manyTasksExecuteWell() {
-    int totalTasks = 1000;
+    int totalTasks = 100;
     this.executorService.submit(new Runnable() {
       @Override
       public void run() {
