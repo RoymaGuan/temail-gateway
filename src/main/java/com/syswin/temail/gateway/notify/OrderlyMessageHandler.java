@@ -70,7 +70,7 @@ public class OrderlyMessageHandler extends MessageHandlerTemplate {
     try {
       this.packetLocalCache.put(packet);
     } catch (InterruptedException e) {
-      log.error("Fail to cache packet: {}",  packet.toString());
+      log.error("Fail to cache packet: {}", packet.toString());
     }
   }
 
