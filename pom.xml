@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -10,7 +8,7 @@
   </parent>
   <groupId>com.syswin.temail</groupId>
   <artifactId>temail-gateway</artifactId>
-  <version>1.1.8-SNAPSHOT</version>
+  <version>1.1.8</version>
   <packaging>${packaging.type}</packaging>
 
 
@@ -39,7 +37,7 @@
     <url>http://git.systoon.com/ZJC_Java/temail-gateway</url>
     <connection>scm:git:git@172.28.4.12:ZJC_Java/temail-gateway.git</connection>
     <developerConnection>scm:git:git@172.28.4.12:ZJC_Java/temail-gateway.git</developerConnection>
-    <tag>${project.version}</tag>
+    <tag>temail-gateway-1.1.8</tag>
   </scm>
 
   <dependencies>
@@ -153,7 +151,7 @@
     <dependency>
       <groupId>com.syswin.library</groupId>
       <artifactId>messaging-all-spring</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
     <!--grpc依赖-->
     <dependency>
