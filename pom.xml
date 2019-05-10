@@ -14,7 +14,6 @@
 
   <properties>
     <ps.version>1.2.13</ps.version>
-    <disconf-spring-boot-starter.version>1.0.0</disconf-spring-boot-starter.version>
     <netty.version>4.1.27.Final</netty.version>
     <disconf-client.version>2.6.36</disconf-client.version>
     <rocketmq-client.version>4.3.0</rocketmq-client.version>
@@ -52,10 +51,17 @@
       <version>${ps.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.systoon.integration</groupId>
-      <artifactId>disconf-spring-boot-starter</artifactId>
-      <version>${disconf-spring-boot-starter.version}</version>
+      <groupId>com.syswin.framework</groupId>
+      <artifactId>syswin-apollo-client</artifactId>
+      <version>1.0.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-context</artifactId>
+      <version>2.0.2.RELEASE</version>
+    </dependency>
+
+
     <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
