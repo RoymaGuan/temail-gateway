@@ -37,6 +37,7 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
 
   @Autowired
   public GrpcClientWrapper(TemailGatewayProperties temailGatewayProperties) {
+    log.info("grpc hosts is {}, port is {}",temailGatewayProperties.getGrpcServerHost(),temailGatewayProperties.getGrpcServerPort() );
     this.temailGatewayProperties = temailGatewayProperties;
     this.grpcReconnectManager = new GrpcReconnectManager(this, temailGatewayProperties);
     this.grpcHeartBeatManager = new GrpcHeartBeatManager(this, temailGatewayProperties);

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties(prefix = "app.gateway")
-@RefreshScope
 public class TemailGatewayProperties {
 
   private String verifyUrl;
