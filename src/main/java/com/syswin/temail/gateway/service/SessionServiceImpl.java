@@ -10,6 +10,8 @@ import com.syswin.temail.ps.common.entity.CDTPProtoBuf.CDTPLogin;
 import com.syswin.temail.ps.common.entity.CDTPProtoBuf.CDTPLoginResp;
 import com.syswin.temail.ps.server.entity.Session;
 import com.syswin.temail.ps.server.service.AbstractSessionService;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -94,12 +96,18 @@ public class SessionServiceImpl extends AbstractSessionService {
   }
 
   private String getPlatform(CDTPPacket cdtpPacket) {
+    byte[] data = cdtpPacket.getData();
+    ByteBuf byteBuf = Unpooled.wrappedBuffer(data);
+    byteBuf.skipBytes(10);// Length(int) + COMMAND_SPACE(short)+COMMOAND(short)+VERSION(short)
+    short e = byteBuf.readShort();
+    byteBuf.skipBytes(e);
+    byte[] cdtpLoginBytes = new byte[byteBuf.readableBytes()];
+    byteBuf.readBytes(cdtpLoginBytes);
     try {
-      byte[] data = cdtpPacket.getData();
-      CDTPLogin cdtpLogin = CDTPLogin.parseFrom(data);
-      return cdtpLogin.getPlatform();
-    } catch (InvalidProtocolBufferException e) {
-      e.printStackTrace();
+      CDTPLogin login = CDTPLogin.parseFrom(cdtpLoginBytes);
+      return login.getPlatform();
+    } catch (InvalidProtocolBufferException ex) {
+      ex.printStackTrace();
     }
     return null;
   }

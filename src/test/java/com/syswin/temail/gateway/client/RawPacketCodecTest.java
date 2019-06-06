@@ -4,12 +4,17 @@ import static com.seanyinx.github.unit.scaffolding.Randomness.uniquify;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.syswin.temail.gateway.codec.FullPacketAwareDecoder;
 import com.syswin.temail.gateway.codec.RawPacketDecoder;
 import com.syswin.temail.gateway.codec.RawPacketEncoder;
 import com.syswin.temail.ps.common.entity.CDTPPacket;
+import com.syswin.temail.ps.common.entity.CDTPProtoBuf.CDTPLogin;
+import com.syswin.temail.ps.common.entity.CDTPProtoBuf.CDTPLoginOrBuilder;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
+import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelId;
@@ -67,4 +72,41 @@ public class RawPacketCodecTest {
     assertThat(packets).isNotEmpty();
     assertThat(packets.get(0)).isEqualToIgnoringGivenFields(packet, "data");
   }
+
+  @Test
+  public void decodeLoginPacket() {
+    CDTPPacket cdtpPacket = PacketMaker.loginPacket("zhangnsa", "deviceId");
+    ByteBuf bufferIncludeLength = Unpooled.buffer();
+
+    encoder.encode(context, cdtpPacket, buffer);
+    bufferIncludeLength.writeInt(buffer.readableBytes());
+    bufferIncludeLength.writeBytes(buffer.retain());
+
+    decoder.decode(context, bufferIncludeLength, packets);
+    CDTPPacket p = (CDTPPacket) packets.get(0);
+    String platform = getPlatform(p);
+    assertThat("ios/android/pc".equals(platform));
+  }
+
+
+  //com.syswin.temail.gateway.service.SessionServiceImpl.getPlatform
+  private String getPlatform(CDTPPacket cdtpPacket) {
+    byte[] data = cdtpPacket.getData();
+    ByteBuf byteBuf = Unpooled.wrappedBuffer(data);
+    byteBuf.skipBytes(10);// Length(int) + COMMAND_SPACE(short)+COMMOAND(short)+VERSION(short)
+    short e = byteBuf.readShort();
+    byteBuf.skipBytes(e);
+    byte[] cdtpLoginBytes = new byte[byteBuf.readableBytes()];
+    byteBuf.readBytes(cdtpLoginBytes);
+    try {
+      CDTPLogin login = CDTPLogin.parseFrom(cdtpLoginBytes);
+      return login.getPlatform();
+    } catch (InvalidProtocolBufferException ex) {
+      ex.printStackTrace();
+    }
+    return null;
+  }
+
 }
+
+
