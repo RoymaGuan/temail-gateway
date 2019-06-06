@@ -28,6 +28,7 @@ message ChannelLocation {
   string account = 1;
   string devId = 2;
   string hostOf = 3;
+  string platform = 7;
   string processId = 4;
   string mqTopic = 5;
   string mqTag = 6;

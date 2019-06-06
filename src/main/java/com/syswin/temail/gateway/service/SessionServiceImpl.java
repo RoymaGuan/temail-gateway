@@ -2,8 +2,11 @@ package com.syswin.temail.gateway.service;
 
 
 import static com.syswin.temail.ps.server.utils.SignatureUtil.resetSignature;
+
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.syswin.temail.gateway.entity.Response;
 import com.syswin.temail.ps.common.entity.CDTPPacket;
+import com.syswin.temail.ps.common.entity.CDTPProtoBuf.CDTPLogin;
 import com.syswin.temail.ps.common.entity.CDTPProtoBuf.CDTPLoginResp;
 import com.syswin.temail.ps.server.entity.Session;
 import com.syswin.temail.ps.server.service.AbstractSessionService;
@@ -77,7 +80,8 @@ public class SessionServiceImpl extends AbstractSessionService {
     CDTPPacket respPacket = new CDTPPacket(reqPacket);
     String temail = reqPacket.getHeader().getSender();
     String deviceId = reqPacket.getHeader().getDeviceId();
-    remoteStatusService.addSession(temail, deviceId, responseConsumer);
+    String platform = getPlatform(reqPacket);
+    remoteStatusService.addSession(temail, deviceId, platform, responseConsumer);
     // 返回成功的消息
     CDTPLoginResp.Builder builder = CDTPLoginResp.newBuilder();
     builder.setCode(response == null ? HttpStatus.OK.value() : response.getCode());
@@ -87,6 +91,17 @@ public class SessionServiceImpl extends AbstractSessionService {
     respPacket.setData(builder.build().toByteArray());
     resetSignature(respPacket);
     return respPacket;
+  }
+
+  private String getPlatform(CDTPPacket cdtpPacket) {
+    try {
+      byte[] data = cdtpPacket.getData();
+      CDTPLogin cdtpLogin = CDTPLogin.parseFrom(data);
+      return cdtpLogin.getPlatform();
+    } catch (InvalidProtocolBufferException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   private CDTPPacket loginFailure(CDTPPacket reqPacket, Response response) {

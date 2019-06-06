@@ -37,34 +37,37 @@ public class RemoteStatusService {
     this.pendingTaskQueue.run();
   }
 
-  public void addSession(String temail, String deviceId, Consumer<Boolean> consumer) {
-    updSessionByType(temail, deviceId, TemailAcctUptOptType.add, consumer);
+  public void addSession(String temail, String deviceId, String platform, Consumer<Boolean> consumer) {
+    updSessionByType(temail, deviceId, platform, TemailAcctUptOptType.add, consumer);
   }
 
   public void removeSession(String temail, String deviceId, Consumer<Boolean> consumer) {
-    updSessionByType(temail, deviceId, TemailAcctUptOptType.del, consumer);
+    updSessionByType(temail, deviceId, "", TemailAcctUptOptType.del, consumer);
   }
 
-  private void updSessionByType(String temail, String deviceId, TemailAcctUptOptType optType,
+  private void updSessionByType(String temail, String deviceId, String platform, TemailAcctUptOptType optType,
       Consumer<Boolean> consumer) {
     reqUpdSts4Upd(
-        new TemailAccoutLocations(singletonList(buildAcctSts(temail, deviceId))),
+        new TemailAccoutLocations(singletonList(buildAcctSts(temail, deviceId, platform))),
         optType,
         consumer);
   }
 
   void removeSessions(Collection<Session> sessions, Consumer<Boolean> consumer) {
-    if(sessions.isEmpty()) return;
+    if (sessions.isEmpty()) {
+      return;
+    }
     List<TemailAccoutLocation> statuses = new ArrayList<>(sessions.size());
+    String platform = "";
     for (Session session : sessions) {
-      statuses.add(buildAcctSts(session.getTemail(), session.getDeviceId()));
+      statuses.add(buildAcctSts(session.getTemail(), session.getDeviceId(), platform));
     }
     reqUpdSts4Upd(new TemailAccoutLocations(statuses), TemailAcctUptOptType.del, consumer);
   }
 
-  private TemailAccoutLocation buildAcctSts(String temail, String deviceId) {
+  private TemailAccoutLocation buildAcctSts(String temail, String deviceId, String platform) {
     Instance instance = properties.getInstance();
-    return new TemailAccoutLocation(temail, deviceId,
+    return new TemailAccoutLocation(temail, deviceId, platform,
         instance.getHostOf(), instance.getProcessId(),
         properties.getRocketmq().getMqTopic(), instance.getMqTag());
   }

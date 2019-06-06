@@ -78,7 +78,7 @@ public class RemoteStatusServiceTest {
 
   private TemailAccoutLocation buildAcctSts(String temail, String deviceId) {
     TemailGatewayProperties.Instance instance = properties.getInstance();
-    return new TemailAccoutLocation(temail, deviceId,
+    return new TemailAccoutLocation(temail, deviceId, "",
         instance.getHostOf(), instance.getProcessId(),
         properties.getRocketmq().getMqTopic(), instance.getMqTag());
   }
