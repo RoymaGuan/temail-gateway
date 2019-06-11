@@ -52,7 +52,6 @@ public class TemailGatewayProperties {
       processId = UUID.randomUUID().toString().replace("-", "").toLowerCase();
       mqTag = "temail-server-" + hostOf + "-" + processId;
     }
-
   }
 
   @Data

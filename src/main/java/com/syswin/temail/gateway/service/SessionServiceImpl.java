@@ -83,7 +83,7 @@ public class SessionServiceImpl extends AbstractSessionService {
     String temail = reqPacket.getHeader().getSender();
     String deviceId = reqPacket.getHeader().getDeviceId();
     String platform = getPlatform(reqPacket);
-    log.info("device platform is {}, header id is {}", platform, reqPacket.getHeader());
+    log.info("device platform is {}, header id is {}", platform, reqPacket.getHeader().toString());
     remoteStatusService.addSession(temail, deviceId, platform, responseConsumer);
     // 返回成功的消息
     CDTPLoginResp.Builder builder = CDTPLoginResp.newBuilder();
@@ -108,7 +108,7 @@ public class SessionServiceImpl extends AbstractSessionService {
       CDTPLogin login = CDTPLogin.parseFrom(cdtpLoginBytes);
       return login.getPlatform();
     } catch (InvalidProtocolBufferException ex) {
-      log.error("parse platform error !!! , the packet is {}", cdtpPacket);
+      log.error("parse platform error !!! , the packet is {}", cdtpPacket.getHeader().toString(), ex);
     }
     return null;
   }
