@@ -86,7 +86,6 @@ public class SessionServiceImpl extends AbstractSessionService {
     String temail = reqPacket.getHeader().getSender();
     String deviceId = reqPacket.getHeader().getDeviceId();
     String platform = getPlatform(reqPacket);
-    log.info("device platform is {}, header id is {}", platform, reqPacket.getHeader().toString());
     remoteStatusService.addSession(temail, deviceId, platform, responseConsumer);
     // 返回成功的消息
     CDTPLoginResp.Builder builder = CDTPLoginResp.newBuilder();
