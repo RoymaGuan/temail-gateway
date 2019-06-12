@@ -8,6 +8,8 @@ import com.syswin.temail.gateway.entity.Response;
 import com.syswin.temail.ps.common.entity.CDTPPacket;
 import com.syswin.temail.ps.common.entity.CDTPProtoBuf.CDTPLogin;
 import com.syswin.temail.ps.common.entity.CDTPProtoBuf.CDTPLoginResp;
+import com.syswin.temail.ps.common.entity.CommandSpaceType;
+import com.syswin.temail.ps.common.entity.CommandType;
 import com.syswin.temail.ps.server.entity.Session;
 import com.syswin.temail.ps.server.service.AbstractSessionService;
 import io.netty.buffer.ByteBuf;
@@ -97,18 +99,21 @@ public class SessionServiceImpl extends AbstractSessionService {
   }
 
   private String getPlatform(CDTPPacket cdtpPacket) {
-    byte[] data = cdtpPacket.getData();
-    ByteBuf byteBuf = Unpooled.wrappedBuffer(data);
-    byteBuf.skipBytes(10);// Length(int) + COMMAND_SPACE(short)+COMMOAND(short)+VERSION(short)
-    short e = byteBuf.readShort();
-    byteBuf.skipBytes(e);
-    byte[] cdtpLoginBytes = new byte[byteBuf.readableBytes()];
-    byteBuf.readBytes(cdtpLoginBytes);
-    try {
-      CDTPLogin login = CDTPLogin.parseFrom(cdtpLoginBytes);
-      return login.getPlatform();
-    } catch (InvalidProtocolBufferException ex) {
-      log.error("parse platform error !!! , the packet is {}", cdtpPacket.getHeader().toString(), ex);
+    if (cdtpPacket.getCommandSpace() == CommandSpaceType.CHANNEL_CODE &&
+        cdtpPacket.getCommand() == CommandType.LOGIN.getCode()) {
+      byte[] data = cdtpPacket.getData();
+      ByteBuf byteBuf = Unpooled.wrappedBuffer(data);
+      byteBuf.skipBytes(10);// Length(int) + COMMAND_SPACE(short)+COMMOAND(short)+VERSION(short)
+      short e = byteBuf.readShort();
+      byteBuf.skipBytes(e);
+      byte[] cdtpLoginBytes = new byte[byteBuf.readableBytes()];
+      byteBuf.readBytes(cdtpLoginBytes);
+      try {
+        CDTPLogin login = CDTPLogin.parseFrom(cdtpLoginBytes);
+        return login.getPlatform();
+      } catch (InvalidProtocolBufferException ex) {
+        log.error("parse platform error !!! , the packet is {}", cdtpPacket.getHeader().toString(), ex);
+      }
     }
     return null;
   }
