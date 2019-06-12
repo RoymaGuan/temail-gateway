@@ -37,7 +37,8 @@ public class SessionServiceImpl extends AbstractSessionService {
   }
 
   @Override
-  protected void loginExtAsync(CDTPPacket reqPacket, Function<CDTPPacket, Collection<Session>> successHandler,
+  protected void loginExtAsync(CDTPPacket reqPacket,
+      Function<CDTPPacket, Collection<Session>> successHandler,
       Consumer<CDTPPacket> failedHandler) {
     String temail = reqPacket.getHeader().getSender();
     String deviceId = reqPacket.getHeader().getDeviceId();
@@ -85,7 +86,7 @@ public class SessionServiceImpl extends AbstractSessionService {
     String temail = reqPacket.getHeader().getSender();
     String deviceId = reqPacket.getHeader().getDeviceId();
     String platform = getPlatform(reqPacket);
-    log.info("device platform is {}, packet is {}", platform, reqPacket);
+    log.info("device platform is {}, header id is {}", platform, reqPacket.getHeader().toString());
     remoteStatusService.addSession(temail, deviceId, platform, responseConsumer);
     // 返回成功的消息
     CDTPLoginResp.Builder builder = CDTPLoginResp.newBuilder();
@@ -109,14 +110,16 @@ public class SessionServiceImpl extends AbstractSessionService {
         byteBuf.skipBytes(e);
         byte[] cdtpLoginBytes = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(cdtpLoginBytes);
-
         CDTPLogin login = CDTPLogin.parseFrom(cdtpLoginBytes);
         return login.getPlatform();
       } catch (Exception ex) {
-        log.error("parse platform error !!! , the packet is {}", cdtpPacket, ex);
+        log.error("parse platform error !!! , the packet is {}", cdtpPacket,
+            ex);
+        return null;
       }
+    } else {
+      return null;
     }
-    return null;
   }
 
   private CDTPPacket loginFailure(CDTPPacket reqPacket, Response response) {
