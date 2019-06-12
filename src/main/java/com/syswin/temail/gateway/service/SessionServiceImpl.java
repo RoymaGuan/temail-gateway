@@ -37,7 +37,8 @@ public class SessionServiceImpl extends AbstractSessionService {
   }
 
   @Override
-  protected void loginExtAsync(CDTPPacket reqPacket, Function<CDTPPacket, Collection<Session>> successHandler,
+  protected void loginExtAsync(CDTPPacket reqPacket,
+      Function<CDTPPacket, Collection<Session>> successHandler,
       Consumer<CDTPPacket> failedHandler) {
     String temail = reqPacket.getHeader().getSender();
     String deviceId = reqPacket.getHeader().getDeviceId();
@@ -101,21 +102,24 @@ public class SessionServiceImpl extends AbstractSessionService {
   private String getPlatform(CDTPPacket cdtpPacket) {
     if (cdtpPacket.getCommandSpace() == CommandSpaceType.CHANNEL_CODE &&
         cdtpPacket.getCommand() == CommandType.LOGIN.getCode()) {
-      byte[] data = cdtpPacket.getData();
-      ByteBuf byteBuf = Unpooled.wrappedBuffer(data);
-      byteBuf.skipBytes(10);// Length(int) + COMMAND_SPACE(short)+COMMOAND(short)+VERSION(short)
-      short e = byteBuf.readShort();
-      byteBuf.skipBytes(e);
-      byte[] cdtpLoginBytes = new byte[byteBuf.readableBytes()];
-      byteBuf.readBytes(cdtpLoginBytes);
       try {
+        byte[] data = cdtpPacket.getData();
+        ByteBuf byteBuf = Unpooled.wrappedBuffer(data);
+        byteBuf.skipBytes(10);// Length(int) + COMMAND_SPACE(short)+COMMOAND(short)+VERSION(short)
+        short e = byteBuf.readShort();
+        byteBuf.skipBytes(e);
+        byte[] cdtpLoginBytes = new byte[byteBuf.readableBytes()];
+        byteBuf.readBytes(cdtpLoginBytes);
         CDTPLogin login = CDTPLogin.parseFrom(cdtpLoginBytes);
         return login.getPlatform();
       } catch (Exception ex) {
-        log.error("parse platform error !!! , the packet is {}", cdtpPacket.getHeader().toString(), ex);
+        log.error("parse platform error !!! , the packet is {}", cdtpPacket.getHeader().toString(),
+            ex);
+        return null;
       }
+    } else {
+      return null;
     }
-    return null;
   }
 
   private CDTPPacket loginFailure(CDTPPacket reqPacket, Response response) {
