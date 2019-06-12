@@ -175,7 +175,7 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
     channelLocations.getStatuses().forEach(lc ->
         builder.addChannelLocationList(
             ChannelLocation.newBuilder().setAccount(lc.getAccount())
-                .setDevId(lc.getDevId()).setHostOf(lc.getHostOf())
+                .setDevId(lc.getDevId()).setPlatform(lc.getPlatform()).setHostOf(lc.getHostOf())
                 .setProcessId(lc.getProcessId()).setMqTopic(lc.getMqTopic())
                 .setMqTag(lc.getMqTag()).build()));
   }
