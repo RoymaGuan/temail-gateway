@@ -3,7 +3,6 @@ package com.syswin.temail.gateway.service;
 
 import static com.syswin.temail.ps.server.utils.SignatureUtil.resetSignature;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.syswin.temail.gateway.entity.Response;
 import com.syswin.temail.ps.common.entity.CDTPPacket;
 import com.syswin.temail.ps.common.entity.CDTPProtoBuf.CDTPLogin;
