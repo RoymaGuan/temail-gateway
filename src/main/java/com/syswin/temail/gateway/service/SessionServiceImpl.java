@@ -98,6 +98,7 @@ public class SessionServiceImpl extends AbstractSessionService {
   }
 
   private String getPlatform(CDTPPacket cdtpPacket) {
+    String platform = null;
     if (cdtpPacket.getCommandSpace() == CommandSpaceType.CHANNEL_CODE &&
         cdtpPacket.getCommand() == CommandType.LOGIN.getCode()) {
       try {
@@ -109,15 +110,13 @@ public class SessionServiceImpl extends AbstractSessionService {
         byte[] cdtpLoginBytes = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(cdtpLoginBytes);
         CDTPLogin login = CDTPLogin.parseFrom(cdtpLoginBytes);
-        return login.getPlatform();
+        platform = login.getPlatform();
       } catch (Exception ex) {
         log.error("parse platform error !!! , the packet is {}", cdtpPacket,
             ex);
-        return null;
       }
-    } else {
-      return null;
     }
+    return platform == null ? "" : platform;
   }
 
   private CDTPPacket loginFailure(CDTPPacket reqPacket, Response response) {
