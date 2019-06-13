@@ -41,6 +41,7 @@ public class SessionServiceImpl extends AbstractSessionService {
       Consumer<CDTPPacket> failedHandler) {
     String temail = reqPacket.getHeader().getSender();
     String deviceId = reqPacket.getHeader().getDeviceId();
+    log.info("loin packet is {}. ", reqPacket);
     if (!StringUtils.hasText(temail) || !StringUtils.hasText(deviceId)) {
       CDTPPacket respPacket = loginFailure(reqPacket,
           Response.failed(HttpStatus.BAD_REQUEST, "temail or deviceId is null！"));
