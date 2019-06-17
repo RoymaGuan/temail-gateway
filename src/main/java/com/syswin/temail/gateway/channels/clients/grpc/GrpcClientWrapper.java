@@ -12,9 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * in wrapper we add reconnect and heartBeat logic to keep original client clean.<p>
- * be aware of keeping client fail fast when channel-server is not available and may
- * be we can update the channels in batch for this fail fast afterwards ...
+ * in wrapper we add reconnect and heartBeat logic to keep original client clean.<p> be aware of keeping client fail
+ * fast when channel-server is not available and may be we can update the channels in batch for this fail fast
+ * afterwards ...
  */
 @Slf4j
 @Data
@@ -37,7 +37,8 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
 
   @Autowired
   public GrpcClientWrapper(TemailGatewayProperties temailGatewayProperties) {
-    log.info("grpc hosts is {}, port is {}",temailGatewayProperties.getGrpcServerHost(),temailGatewayProperties.getGrpcServerPort() );
+    log.info("grpc hosts is {}, port is {}", temailGatewayProperties.getGrpcServerHost(),
+        temailGatewayProperties.getGrpcServerPort());
     this.temailGatewayProperties = temailGatewayProperties;
     this.grpcReconnectManager = new GrpcReconnectManager(this, temailGatewayProperties);
     this.grpcHeartBeatManager = new GrpcHeartBeatManager(this, temailGatewayProperties);
@@ -174,9 +175,14 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
       ChannelLocations.Builder builder) {
     channelLocations.getStatuses().forEach(lc ->
         builder.addChannelLocationList(
-            ChannelLocation.newBuilder().setAccount(lc.getAccount())
-                .setDevId(lc.getDevId()).setPlatform(lc.getPlatform()).setHostOf(lc.getHostOf())
-                .setProcessId(lc.getProcessId()).setMqTopic(lc.getMqTopic())
-                .setMqTag(lc.getMqTag()).build()));
+            ChannelLocation.newBuilder()
+                .setAccount(lc.getAccount())
+                .setDevId(lc.getDevId())
+                .setPlatform(lc.getPlatform())
+                .setHostOf(lc.getHostOf())
+                .setProcessId(lc.getProcessId())
+                .setMqTopic(lc.getMqTopic())
+                .setMqTag(lc.getMqTag())
+                .build()));
   }
 }

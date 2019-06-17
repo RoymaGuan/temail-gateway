@@ -23,7 +23,6 @@ public class RequestServiceImpl implements RequestService {
   public void handleRequest(CDTPPacket reqPacket, Consumer<CDTPPacket> responseHandler) {
     dispatchService.dispatch(reqPacket.getData(),
         bytes -> {
-          // 后台正常返回
           reqPacket.setData(bytes);
           resetSignature(reqPacket);
           responseHandler.accept(reqPacket);

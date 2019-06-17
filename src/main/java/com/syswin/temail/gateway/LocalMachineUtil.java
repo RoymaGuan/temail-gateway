@@ -34,7 +34,7 @@ public class LocalMachineUtil {
           ip = (InetAddress) addresses.nextElement();
           if (ip instanceof Inet4Address) { // IP是ipv4，ipv6换成Inet6Address
             String hostAddress = ip.getHostAddress();
-            if (!hostAddress.equals("127.0.0.1") && !hostAddress.equals("/127.0.0.1")) {
+            if (!"127.0.0.1".equals(hostAddress) && !"/127.0.0.1".equals(hostAddress)) {
               ipLocalAddr = ip.toString().split("[/]")[1]; // 得到本地IP
             }
           }

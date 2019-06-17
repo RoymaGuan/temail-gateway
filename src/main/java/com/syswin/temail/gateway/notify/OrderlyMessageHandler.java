@@ -47,9 +47,9 @@ public class OrderlyMessageHandler extends MessageHandlerTemplate {
                       header.getDeviceId());
 
               for (Channel channel : channels) {
-                log.info("Wrote MQ message:{} to channel：{}", packet, channel);
+                log.info("Write MQ message:{} to channel：{}", packet, channel);
                 channel.writeAndFlush(packet, channel.voidPromise());
-                if(callBackAfterWrite != null){
+                if (callBackAfterWrite != null) {
                   callBackAfterWrite.accept(packet);
                 }
               }
@@ -74,7 +74,7 @@ public class OrderlyMessageHandler extends MessageHandlerTemplate {
     }
   }
 
-  public boolean isPendingQueueIsEmpty(){
+  public boolean isPendingQueueIsEmpty() {
     return this.packetLocalCache.isEmpty();
   }
 

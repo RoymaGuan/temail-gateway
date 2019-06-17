@@ -39,19 +39,4 @@ public class GatewayMqConficuration {
     Runtime.getRuntime().addShutdownHook(new Thread(consumer::shutdown));
     return consumer;
   }
-
-  //@Bean
-  //MqProducerConfig producerConfig(String group) {
-  //  return new MqProducerConfig(group);
-  //}
-
-  //@Bean
-  //MqConsumerConfig consumerConfig(TemailGatewayProperties properties, ChannelManager channelManager) {
-  //  OrderlyMessageHandler orderlyMessageHandler = new OrderlyMessageHandler(channelManager,t->{});
-  //  TemailGatewayProperties.Rocketmq rocketmq = properties.getRocketmq();
-  //  return MqConsumerConfig.create().group(rocketmq.getConsumerGroup()).topic(rocketmq.getMqTopic())
-  //      .tag(properties.getInstance().getMqTag()).sequential().implementation(MqImplementation.ROCKET_MQ)
-  //      .listener(orderlyMessageHandler::onMessageReceived).build();
-  //}
-
 }

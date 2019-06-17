@@ -5,10 +5,10 @@ import org.apache.http.concurrent.FutureCallback;
 
 public interface AbstractHttpCall {
 
-  public void start();
+  void start();
 
-  public void close();
+  void close();
 
-  public void execute(HttpRequestBase requestBase, FutureCallback futureCallback);
+  void execute(HttpRequestBase requestBase, FutureCallback futureCallback);
 
 }
