@@ -83,22 +83,18 @@ public class SessionServiceImpl extends AbstractSessionService {
 
   private CDTPPacket loginSuccess(CDTPPacket reqPacket, Response response) {
     CDTPPacket respPacket = new CDTPPacket(reqPacket);
-    try {
-      String temail = reqPacket.getHeader().getSender();
-      String deviceId = reqPacket.getHeader().getDeviceId();
-      String platform = getPlatform(reqPacket);
-      remoteStatusService.addSession(temail, deviceId, platform, responseConsumer);
-      // 返回成功的消息
-      CDTPLoginResp.Builder builder = CDTPLoginResp.newBuilder();
-      builder.setCode(response == null ? HttpStatus.OK.value() : response.getCode());
-      if (response != null && response.getMessage() != null) {
-        builder.setDesc(response.getMessage());
-      }
-      respPacket.setData(builder.build().toByteArray());
-      resetSignature(respPacket);
-    } catch (Exception e) {
-      log.error("some error happened, packet is {}", reqPacket, e);
+    String temail = reqPacket.getHeader().getSender();
+    String deviceId = reqPacket.getHeader().getDeviceId();
+    String platform = getPlatform(reqPacket);
+    remoteStatusService.addSession(temail, deviceId, platform, responseConsumer);
+    // 返回成功的消息
+    CDTPLoginResp.Builder builder = CDTPLoginResp.newBuilder();
+    builder.setCode(response == null ? HttpStatus.OK.value() : response.getCode());
+    if (response != null && response.getMessage() != null) {
+      builder.setDesc(response.getMessage());
     }
+    respPacket.setData(builder.build().toByteArray());
+    resetSignature(respPacket);
     return respPacket;
   }
 
