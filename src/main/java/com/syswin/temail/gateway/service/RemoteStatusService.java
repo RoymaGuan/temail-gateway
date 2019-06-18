@@ -25,16 +25,10 @@ public class RemoteStatusService {
   private final ChannelsSyncClient channelsSyncClient;
 
   // a async queue used for retry failed task
-  private final PendingTaskQueue<Pair> pendingTaskQueue = new PendingTaskQueue<>(
-      5000,
-      pair -> reqUpdSts4Upd(pair.getTemailAccoutLocations(), pair.getTemailAcctUptOptType(), ignored -> {
-      })
-  );
 
   public RemoteStatusService(TemailGatewayProperties properties, ChannelsSyncClient channelsSyncClient) {
     this.channelsSyncClient = channelsSyncClient;
     this.properties = properties;
-    this.pendingTaskQueue.run();
   }
 
   public void addSession(String temail, String deviceId, String platform, Consumer<Boolean> consumer) {
@@ -77,15 +71,9 @@ public class RemoteStatusService {
     if (type == TemailAcctUptOptType.add) {
       boolean addResult = channelsSyncClient.syncChannelLocations(temailAccoutLocations);
       consumer.accept(addResult);
-      if (!addResult) {
-        pendingTaskQueue.addTask(new Pair(type, temailAccoutLocations));
-      }
     } else {
       boolean remResult = channelsSyncClient.removeChannelLocations(temailAccoutLocations);
       consumer.accept(remResult);
-      if (!remResult) {
-        pendingTaskQueue.addTask(new Pair(type, temailAccoutLocations));
-      }
     }
   }
 
