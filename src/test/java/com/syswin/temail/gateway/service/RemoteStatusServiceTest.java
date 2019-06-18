@@ -107,4 +107,22 @@ public class RemoteStatusServiceTest {
 
   }
 
+  @Test
+  public void testAddSessions() {
+    remoteStatusService.addSession("zhangsan", "ios110", "ios", x -> {
+    });
+  }
+
+  @Test
+  public void testRemoveSession() {
+    remoteStatusService.removeSessions(sessions, x -> {
+    });
+
+    remoteStatusService.removeSessions(new ArrayList<>(), x -> {
+    });
+
+    remoteStatusService.removeSession("zhangsan", "ios111", x -> {
+    });
+
+  }
 }

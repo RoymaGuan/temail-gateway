@@ -1,18 +1,74 @@
 package com.syswin.temail.gateway.service;
 
-import static org.junit.Assert.*;
-
-import com.google.protobuf.InvalidProtocolBufferException;
+import com.syswin.temail.gateway.client.PacketMaker;
 import com.syswin.temail.ps.common.entity.CDTPPacket;
 import com.syswin.temail.ps.common.entity.CDTPProtoBuf.CDTPLogin;
+import com.syswin.temail.ps.server.service.SessionService;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import static org.mockito.Mockito.*;
+
+
 @Slf4j
 public class SessionServiceImplTest {
+
+
+  private RemoteStatusService remoteStatusService;
+
+  private AuthService authService;
+
+  private SessionService sessionService;
+
+
+  @Before
+  public void setUp() {
+    remoteStatusService = mock(RemoteStatusService.class);
+    authService = mock(AuthService.class);
+    authService.validSignature(new byte[10], x -> {
+      log.info("valid success");
+    }, x -> {
+      log.error("valid failed");
+    });
+    sessionService = new SessionServiceImpl(authService, remoteStatusService);
+  }
+
+
+  @Test
+  public void testLogin() {
+    CDTPPacket cdtpPacket = PacketMaker.loginPacket("zhangsan", "ios110");
+    Channel channel = Mockito.mock(Channel.class);
+    sessionService.login(channel, cdtpPacket);
+
+  }
+
+  @Test
+  public void testLoginByEmptyAccount() {
+    CDTPPacket cdtpPacket = PacketMaker.loginPacket(null, "ios110");
+    Channel channel = Mockito.mock(Channel.class);
+    sessionService.login(channel, cdtpPacket);
+  }
+
+
+  @Test
+  public void testDisconnectExt() {
+    Channel channel = Mockito.mock(Channel.class);
+    sessionService.disconnect(channel);
+  }
+
+
+  @Test
+  public void testLogout() {
+    CDTPPacket cdtpPacket = PacketMaker.logOutPacket("zhangsan", "111");
+    Channel channel = Mockito.mock(Channel.class);
+    sessionService.logout(channel, cdtpPacket);
+  }
+
 
 
   private final byte[] data = new byte[]{0, 0, 2, -59, 0, 9, 0, 2, 0, 2, 2, 81, 10, 64, 52, 65, 66,
@@ -54,7 +110,7 @@ public class SessionServiceImplTest {
   private final CDTPPacket cdtpLogin = new CDTPPacket();
 
   @Test
-  public void go(){
+  public void go() {
     cdtpLogin.setData(data);
     //this.getPlatform(cdtpLogin);
   }
