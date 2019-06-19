@@ -120,8 +120,9 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
   @Override
   public boolean syncChannelLocations(ChannelLocations channelLocations) {
     try {
+      boolean locations = grpcClientReference.get().syncChannelLocations(channelLocations);
       log.info("sync channel Locations success : {}", channelLocations.toString());
-      return grpcClientReference.get().syncChannelLocations(channelLocations);
+      return locations;
     } catch (Exception e) {
       log.error("sync channel Locations fail : {} ", channelLocations.toString(), e);
       reconnect();
@@ -133,8 +134,9 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
   @Override
   public boolean removeChannelLocations(ChannelLocations channelLocations) {
     try {
+      boolean locations = grpcClientReference.get().removeChannelLocations(channelLocations);
       log.info("remove channel Locations success : {} - success. ", channelLocations.toString());
-      return grpcClientReference.get().removeChannelLocations(channelLocations);
+      return locations;
     } catch (Exception e) {
       log.error("remove channel Locations fail : {} ", channelLocations.toString(), e);
       reconnect();
