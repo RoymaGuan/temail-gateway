@@ -47,6 +47,7 @@ public class GrpcReconnectManager {
             log.error("reconnect fail, {} seconds try again! ", reconnectDelay);
             throw new IllegalStateException("reconnect fail.");
           }
+          grpcClientWrapper.getGrpcClient().newGeneration();
           onConnectedHandler.run();
           log.info("reconnect success, now exit the reconnect loop! ");
           break;

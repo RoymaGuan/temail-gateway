@@ -31,7 +31,7 @@ public class GrpcConcurrentData {
   }
 
   public void changeClientStatusUnavailible() {
-    grpcClientWrapper.reconnect();
+    grpcClientWrapper.reconnect(grpcClientWrapper.getGrpcClient().getGeneration());
   }
 
 }

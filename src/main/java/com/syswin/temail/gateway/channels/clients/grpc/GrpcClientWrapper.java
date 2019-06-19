@@ -68,7 +68,7 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
   @Override
   public boolean retryConnection(GatewayServer gatewayServer) {
     try {
-      return grpcClientReference.get().retryConnection(gatewayServer);
+      return grpcClient.retryConnection(gatewayServer);
     } catch (Exception e) {
       log.error("try connect with grpc server fail.", e);
       return false;
@@ -83,11 +83,12 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
 
   @Override
   public boolean serverRegistry(GatewayServer gatewayServer) {
+    String curGeneration = grpcClientReference.get().getGeneration();
     try {
       return grpcClientReference.get().serverRegistry(gatewayServer);
     } catch (Exception e) {
       log.error("server registry fail, try to reconnect grpcServer.", e);
-      reconnect();
+      reconnect(curGeneration);
       return false;
     }
   }
@@ -108,10 +109,11 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
 
   @Override
   public boolean serverHeartBeat(GatewayServer gatewayServer) {
+    String curGeneration = grpcClientReference.get().getGeneration();
     try {
       return grpcClientReference.get().serverHeartBeat(gatewayServer);
     } catch (Exception e) {
-      reconnect();
+      reconnect(curGeneration);
       return false;
     }
   }
@@ -119,13 +121,14 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
 
   @Override
   public boolean syncChannelLocations(ChannelLocations channelLocations) {
+    String curGeneration = grpcClientReference.get().getGeneration();
     try {
       boolean locations = grpcClientReference.get().syncChannelLocations(channelLocations);
       log.info("sync channel Locations success : {}", channelLocations.toString());
       return locations;
     } catch (Exception e) {
       log.error("sync channel Locations fail : {} ", channelLocations.toString(), e);
-      reconnect();
+      reconnect(curGeneration);
       return false;
     }
   }
@@ -133,23 +136,34 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
 
   @Override
   public boolean removeChannelLocations(ChannelLocations channelLocations) {
+    String curGeneration = grpcClientReference.get().getGeneration();
     try {
       boolean locations = grpcClientReference.get().removeChannelLocations(channelLocations);
       log.info("remove channel Locations success : {} - success. ", channelLocations.toString());
       return locations;
     } catch (Exception e) {
       log.error("remove channel Locations fail : {} ", channelLocations.toString(), e);
-      reconnect();
+      reconnect(curGeneration);
       return false;
     }
   }
 
+  @Override
+  public void newGeneration() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public String getGeneration() {
+    throw new UnsupportedOperationException();
+  }
 
   /**
    * reconnect client by trying to registry current server.
    */
-  void reconnect() {
-    if (grpcClientReference.compareAndSet(grpcClient, alwaysFailGrpcClient)) {
+  void reconnect(String failedGenration) {
+    if (grpcClientReference.compareAndSet(grpcClient, alwaysFailGrpcClient)
+    && grpcClient.getGeneration().equals(failedGenration)) {
       log.info("grpc client is unavailable, try to reconnect!");
       grpcReconnectManager.reconnect(
           () -> grpcClientReference.compareAndSet(alwaysFailGrpcClient, grpcClient));

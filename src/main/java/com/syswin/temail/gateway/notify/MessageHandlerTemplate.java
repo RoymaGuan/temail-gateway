@@ -28,7 +28,7 @@ public abstract class MessageHandlerTemplate {
 
   public void onMessageReceived(String message){
     try {
-      log.debug("Received message: {} from MQ.", message);
+      log.info("Received message: {} from MQ.", message);
       CDTPPacket packet = gson.fromJson(message, CDTPPacket.class);
       CDTPHeader header = packet.getHeader();
 

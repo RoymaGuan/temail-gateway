@@ -46,4 +46,14 @@ public class AlwaysFailGrpcClient implements GrpcClient {
     return false;
   }
 
+  @Override
+  public void newGeneration() {
+
+  }
+
+  @Override
+  public String getGeneration() {
+    return "";
+  }
+
 }

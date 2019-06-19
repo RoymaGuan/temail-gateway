@@ -5,6 +5,7 @@ import com.syswin.temail.channel.grpc.servers.GatewayRegistrySyncServerGrpc;
 import com.syswin.temail.channel.grpc.servers.GatewayServer;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import java.util.UUID;
 import lombok.Data;
 
 @Data
@@ -13,6 +14,8 @@ class GrpcClientImpl implements GrpcClient {
   private final GatewayRegistrySyncServerGrpc.GatewayRegistrySyncServerBlockingStub serverBlockingStub;
 
   private final ManagedChannel channel;
+
+  private String generation = UUID.randomUUID().toString();
 
   public GrpcClientImpl(String host, int port) {
     this(ManagedChannelBuilder.forAddress(host, port).usePlaintext());
@@ -56,6 +59,16 @@ class GrpcClientImpl implements GrpcClient {
   @Override
   public boolean removeChannelLocations(ChannelLocations channelLocations) {
     return serverBlockingStub.removeChannelLocations(channelLocations).getIsSuccess();
+  }
+
+  @Override
+  public void newGeneration() {
+    this.generation = UUID.randomUUID().toString();
+  }
+
+  @Override
+  public String getGeneration() {
+    return this.generation;
   }
 
 }
