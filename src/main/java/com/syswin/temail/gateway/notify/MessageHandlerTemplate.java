@@ -1,6 +1,7 @@
 package com.syswin.temail.gateway.notify;
 
 import static com.syswin.temail.ps.server.utils.SignatureUtil.resetSignature;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -26,14 +27,16 @@ public abstract class MessageHandlerTemplate {
         .create();
   }
 
-  public void onMessageReceived(String message){
+  public void onMessageReceived(String message) {
     try {
       log.debug("Received message: {} from MQ.", message);
       CDTPPacket packet = gson.fromJson(message, CDTPPacket.class);
       CDTPHeader header = packet.getHeader();
 
       // 对于通知消息，重新生成packetId，避免跟请求的返回消息重复而产生错误
-      header.setPacketId(UUID.randomUUID().toString());
+      String newPacketId = UUID.randomUUID().toString();
+      log.info("update packet id . packetId is {} , new packet id is {}", header.getPacketId(), newPacketId);
+      header.setPacketId(newPacketId);
       resetSignature(packet);
       writeBackPacket(packet);
 
