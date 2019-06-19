@@ -49,7 +49,7 @@ class GrpcHeartBeatManager {
       executorService.scheduleWithFixedDelay(() -> {
         try {
           if (grpcClient.serverHeartBeat(gatewayServer)) {
-            log.debug("heart beat success : {}-{}", gatewayServer.getIp(), gatewayServer.getProcessId());
+            log.info("heart beat success : {}-{}", gatewayServer.getIp(), gatewayServer.getProcessId());
           } else {
             log.error("heart beat fail, try again after {} seconds .", heartBeatDelay);
           }
