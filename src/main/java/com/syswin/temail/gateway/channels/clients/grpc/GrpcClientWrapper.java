@@ -35,9 +35,10 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
 
   private final GrpcClient grpcClient;
 
+
   @Autowired
   public GrpcClientWrapper(TemailGatewayProperties temailGatewayProperties) {
-    log.info("grpc hosts is {}, port is {}", temailGatewayProperties.getGrpcServerHost(),
+    log.info("Grpc hosts is {}, port is {}", temailGatewayProperties.getGrpcServerHost(),
         temailGatewayProperties.getGrpcServerPort());
     this.temailGatewayProperties = temailGatewayProperties;
     this.grpcReconnectManager = new GrpcReconnectManager(this, temailGatewayProperties);
@@ -65,15 +66,18 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
     this.closeConnection();
   }
 
+
   @Override
   public boolean retryConnection(GatewayServer gatewayServer) {
     try {
       return grpcClient.retryConnection(gatewayServer);
     } catch (Exception e) {
-      log.error("try connect with grpc server fail.", e);
+      log.error("Exception happened while reconnect to grpcServer with: {}.",
+          gatewayServer.toString(), e);
       return false;
     }
   }
+
 
   @Override
   public void closeConnection() {
@@ -83,12 +87,12 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
 
   @Override
   public boolean serverRegistry(GatewayServer gatewayServer) {
-    String curGeneration = grpcClientReference.get().getGeneration();
     try {
       return grpcClientReference.get().serverRegistry(gatewayServer);
     } catch (Exception e) {
-      log.error("server registry fail, try to reconnect grpcServer.", e);
-      reconnect(curGeneration);
+      log.error("Exception happened while try to registry: {} to grpcServer.",
+          gatewayServer.toString() ,e);
+      reconnect();
       return false;
     }
   }
@@ -101,7 +105,8 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
     } catch (Exception e) {
       //even fail, the server offLine will be executed by channel server
       //when heart beat timeout so do not try to reconnect again.
-      log.error("server offLine fail, try to reconnect grpcServer.", e);
+      log.error("Exception happened while offLine gatewayServer: {}.",
+          gatewayServer.toString() ,e);
       return false;
     }
   }
@@ -109,11 +114,12 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
 
   @Override
   public boolean serverHeartBeat(GatewayServer gatewayServer) {
-    String curGeneration = grpcClientReference.get().getGeneration();
     try {
       return grpcClientReference.get().serverHeartBeat(gatewayServer);
     } catch (Exception e) {
-      reconnect(curGeneration);
+      log.error("Exception happened while send heartBeat: {} to grpcServer.",
+          gatewayServer.toString(), e);
+      reconnect();
       return false;
     }
   }
@@ -121,14 +127,13 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
 
   @Override
   public boolean syncChannelLocations(ChannelLocations channelLocations) {
-    String curGeneration = grpcClientReference.get().getGeneration();
     try {
-      boolean locations = grpcClientReference.get().syncChannelLocations(channelLocations);
       log.info("sync channel Locations success : {}", channelLocations.toString());
-      return locations;
+      return grpcClientReference.get().syncChannelLocations(channelLocations);
     } catch (Exception e) {
-      log.error("sync channel Locations fail : {} ", channelLocations.toString(), e);
-      reconnect(curGeneration);
+      log.error("Exception happened while try to sync channelLocations: {} ",
+          channelLocations.toString(), e);
+      reconnect();
       return false;
     }
   }
@@ -136,35 +141,23 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
 
   @Override
   public boolean removeChannelLocations(ChannelLocations channelLocations) {
-    String curGeneration = grpcClientReference.get().getGeneration();
     try {
-      boolean locations = grpcClientReference.get().removeChannelLocations(channelLocations);
       log.info("remove channel Locations success : {} - success. ", channelLocations.toString());
-      return locations;
+      return grpcClientReference.get().removeChannelLocations(channelLocations);
     } catch (Exception e) {
-      log.error("remove channel Locations fail : {} ", channelLocations.toString(), e);
-      reconnect(curGeneration);
+      log.error("Exception happened while try to remove channelLocations: {} ",
+          channelLocations.toString(), e);
+      reconnect();
       return false;
     }
-  }
-
-  @Override
-  public void newGeneration() {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public String getGeneration() {
-    throw new UnsupportedOperationException();
   }
 
   /**
    * reconnect client by trying to registry current server.
    */
-  void reconnect(String failedGenration) {
-    if (grpcClientReference.compareAndSet(grpcClient, alwaysFailGrpcClient)
-    && grpcClient.getGeneration().equals(failedGenration)) {
-      log.info("grpc client is unavailable, try to reconnect!");
+  void reconnect() {
+    if (grpcClientReference.compareAndSet(grpcClient, alwaysFailGrpcClient)) {
+      log.info("Grpc client is unavailable, try to reconnect!");
       grpcReconnectManager.reconnect(
           () -> grpcClientReference.compareAndSet(alwaysFailGrpcClient, grpcClient));
     }

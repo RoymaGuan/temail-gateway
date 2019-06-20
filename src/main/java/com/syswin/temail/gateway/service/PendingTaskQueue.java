@@ -2,9 +2,10 @@ package com.syswin.temail.gateway.service;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Consumer;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 
 //now we use a async queue to retry the failed request
@@ -12,15 +13,15 @@ import lombok.extern.slf4j.Slf4j;
 class PendingTaskQueue<T> implements Runnable {
 
   private final BlockingQueue<T> pendingTaskQueue;
-  private final Consumer<T> taskConsumer;
-  private final Executor scheduler;
+  private final Function<T, Boolean> taskConsumer;
+  private final ExecutorService scheduler;
   private final int delayInMillis;
 
-  PendingTaskQueue(int delayInMillis, Consumer<T> taskConsumer) {
+  PendingTaskQueue(int delayInMillis, Function<T, Boolean> taskConsumer) {
     this(delayInMillis, taskConsumer, Executors.newSingleThreadScheduledExecutor());
   }
 
-  PendingTaskQueue(int delayInMillis, Consumer<T> taskConsumer, Executor scheduler) {
+  PendingTaskQueue(int delayInMillis, Function<T, Boolean> taskConsumer, ExecutorService scheduler) {
     this.pendingTaskQueue = new ArrayBlockingQueue<>(512 * 4);
     this.taskConsumer = taskConsumer;
     this.scheduler = scheduler;
@@ -34,26 +35,66 @@ class PendingTaskQueue<T> implements Runnable {
 
   public void run() {
     scheduler.execute(() -> {
-      try {
-        while (!Thread.currentThread().isInterrupted()) {
-          T pair = obtainTask();
-          try {
-            log.debug("obtain one retry task: {}", pair);
-            taskConsumer.accept(pair);
-          } catch (Exception e) {
-            log.error("failed to add retry task: ", e);
-            pendingTaskQueue.offer(pair);
-            Thread.sleep(delayInMillis);
-          }
+      T pair = null;
+      boolean needSleep = false;
+      while (!Thread.currentThread().isInterrupted()) {
+        //fetch a task
+        pair = getT();
+        if (pair == null) {
+          continue;
         }
-      } catch (InterruptedException e) {
-        log.warn("Pending task scheduler is interrupted", e);
+
+        //if need wait
+        if (needSleep && !tryWait()) {
+          pendingTaskQueue.offer(pair);
+          continue;
+        }
+
+        try {
+          log.debug("Fetch a retry task: {}", pair);
+          needSleep = !taskConsumer.apply(pair);
+        } catch (Exception e) {
+          log.error("failed to add retry task: ", e);
+          pendingTaskQueue.offer(pair);
+          needSleep = true;
+        }
       }
     });
   }
 
-  private T obtainTask() throws InterruptedException {
-    log.debug("remove 1 task, now there is {} tasks wait to be retry!", pendingTaskQueue.size());
-    return pendingTaskQueue.take();
+  private T getT() {
+    T pair;
+    try {
+      pair = pendingTaskQueue.take();
+    } catch (InterruptedException e) {
+      log.error("Thread interrupted while trying to fetch a task!");
+      Thread.currentThread().interrupt();
+      return null;
+    } catch (Exception e) {
+      log.warn("Exception happened while trying to fetch a task.");
+      return null;
+    }
+    return pair;
   }
+
+
+  private boolean tryWait() {
+    try {
+      TimeUnit.MILLISECONDS.sleep(delayInMillis);
+    } catch (InterruptedException e) {
+      log.error("Thread interrupted while trying to sleep for: "
+          + "{} milliseconds.", delayInMillis);
+      Thread.currentThread().interrupt();
+      return false;
+    } catch (Exception e) {
+      log.warn("Exception happened while trying to fetch a task.");
+      return false;
+    }
+    return true;
+  }
+
+  public void shutDown(){
+    this.scheduler.shutdown();
+  }
+
 }

@@ -40,24 +40,23 @@ public class GrpcReconnectManager {
    */
   public void reconnect(Runnable onConnectedHandler) {
     executorService.submit(() -> {
-      log.info("reconnect logic will be executed.");
+      log.info("Reconnect logic will be executed.");
       while (!Thread.currentThread().isInterrupted()) {
         try {
           if (!grpcClientWrapper.getGrpcClient().retryConnection(gatewayServer)) {
-            log.error("reconnect fail, {} seconds try again! ", reconnectDelay);
+            log.error("Reconnect fail, {} seconds try again! ", reconnectDelay);
             throw new IllegalStateException("reconnect fail.");
           }
-          grpcClientWrapper.getGrpcClient().newGeneration();
           onConnectedHandler.run();
-          log.info("reconnect success, now exit the reconnect loop! ");
+          log.info("Reconnect success, now exit the reconnect loop! ");
           break;
         } catch (Exception e) {
-          log.warn("reconnect fail, it will try again after {} seconds ! ", reconnectDelay, e);
+          log.warn("Reconnect fail, it will try again after {} seconds ! ", reconnectDelay, e);
           try {
             TimeUnit.SECONDS.sleep(reconnectDelay);
           } catch (InterruptedException e1) {
             Thread.currentThread().interrupt();
-            log.warn("reconnect loop is interrupted, now exit!", e1);
+            log.warn("Reconnect loop is interrupted, now exit!", e1);
           }
         }
       }

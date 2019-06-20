@@ -18,42 +18,32 @@ public class AlwaysFailGrpcClient implements GrpcClient {
 
   @Override
   public boolean serverRegistry(GatewayServer gatewayServer) {
-    log.info("AlwaysFailGrpcClient.serverRegistry() is beging executed!");
+    log.info("AlwaysFailGrpcClient register a gatewayServer: {}, result: false！", gatewayServer.toString());
     return false;
   }
 
   @Override
   public boolean serverOffLine(GatewayServer gatewayServer) {
-    log.info("AlwaysFailGrpcClient.serverOffLine() is beging executed!");
+    log.info("AlwaysFailGrpcClient offLine a gatewayServer: {}, result: false!", gatewayServer.toString());
     return false;
   }
 
   @Override
   public boolean serverHeartBeat(GatewayServer gatewayServer) {
-    log.info("AlwaysFailGrpcClient.serverHeartBeat() is beging executed!");
+    log.info("AlwaysFailGrpcClient send a heartBeat with: {}, result: false!", gatewayServer.toString());
     return false;
   }
 
   @Override
   public boolean syncChannelLocations(ChannelLocations channelLocations) {
-    log.info("AlwaysFailGrpcClient.syncChannelLocations() is beging executed!");
+    log.info("AlwaysFailGrpcClient sync channelLocations: {}, result: false!", channelLocations.toString());
     return false;
   }
 
   @Override
   public boolean removeChannelLocations(ChannelLocations channelLocations) {
-    log.info("AlwaysFailGrpcClient.removeChannelLocations() is beging executed!");
+    log.info("AlwaysFailGrpcClient remove channelLocations: {}, result: false!", channelLocations);
     return false;
-  }
-
-  @Override
-  public void newGeneration() {
-
-  }
-
-  @Override
-  public String getGeneration() {
-    return "";
   }
 
 }

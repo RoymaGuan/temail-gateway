@@ -40,17 +40,4 @@ public interface GrpcClient {
    */
   boolean removeChannelLocations(ChannelLocations channelLocations);
 
-  /**
-   * called when a new connection was build
-   */
-  void newGeneration();
-
-  /**
-   * returns the generation of cur connection
-   * @return
-   */
-  String getGeneration();
-
-
-
 }
