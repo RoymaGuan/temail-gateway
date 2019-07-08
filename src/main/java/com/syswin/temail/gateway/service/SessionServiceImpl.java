@@ -137,7 +137,7 @@ public class SessionServiceImpl extends AbstractSessionService {
         CDTPLogin login = CDTPLogin.parseFrom(cdtpLoginBytes);
         platform = login.getPlatform();
       } catch (Exception ex) {
-        log.error("parse platform error !!! , the packet is {}", cdtpPacket,
+        log.info("parse platform error !!! , the packet is {}", cdtpPacket,
             ex);
       }
     }
