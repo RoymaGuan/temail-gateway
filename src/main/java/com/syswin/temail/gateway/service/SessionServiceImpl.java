@@ -27,6 +27,7 @@ package com.syswin.temail.gateway.service;
 
 import static com.syswin.temail.ps.server.utils.SignatureUtil.resetSignature;
 
+import com.syswin.temail.gateway.entity.AccountInfo;
 import com.syswin.temail.gateway.entity.Response;
 import com.syswin.temail.ps.common.entity.CDTPPacket;
 import com.syswin.temail.ps.common.entity.CDTPProtoBuf.CDTPLogin;
@@ -37,6 +38,7 @@ import com.syswin.temail.ps.server.entity.Session;
 import com.syswin.temail.ps.server.service.AbstractSessionService;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -109,8 +111,9 @@ public class SessionServiceImpl extends AbstractSessionService {
     CDTPPacket respPacket = new CDTPPacket(reqPacket);
     String temail = reqPacket.getHeader().getSender();
     String deviceId = reqPacket.getHeader().getDeviceId();
-    String platform = getPlatform(reqPacket);
-    remoteStatusService.addSession(temail, deviceId, platform, responseConsumer);
+    String platform = getLoginInfoFromCdtpPacket(reqPacket, "platform", null);
+    String appVer = getLoginInfoFromCdtpPacket(reqPacket, "appVer", null);
+    remoteStatusService.addSession(new AccountInfo(temail, deviceId, platform, appVer), responseConsumer);
     // 返回成功的消息
     CDTPLoginResp.Builder builder = CDTPLoginResp.newBuilder();
     builder.setCode(response == null ? HttpStatus.OK.value() : response.getCode());
@@ -122,8 +125,15 @@ public class SessionServiceImpl extends AbstractSessionService {
     return respPacket;
   }
 
-  private String getPlatform(CDTPPacket cdtpPacket) {
-    String platform = null;
+
+  /**
+   * @param cdtpPacket ths cdtp packet
+   * @param field the field your want to get from the cdtppacket, please see field name in CDTPLogin
+   * @param errorHandler some things to do when get info error，if this is null, we will do nothing
+   */
+  private String getLoginInfoFromCdtpPacket(CDTPPacket cdtpPacket, String field,
+      Consumer<Exception> errorHandler) {
+    String loginInfo = null;
     if (cdtpPacket.getCommandSpace() == CommandSpaceType.CHANNEL_CODE &&
         cdtpPacket.getCommand() == CommandType.LOGIN.getCode()) {
       try {
@@ -135,13 +145,18 @@ public class SessionServiceImpl extends AbstractSessionService {
         byte[] cdtpLoginBytes = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(cdtpLoginBytes);
         CDTPLogin login = CDTPLogin.parseFrom(cdtpLoginBytes);
-        platform = login.getPlatform();
+        Field declaredField = login.getClass().getDeclaredField(field);
+        declaredField.setAccessible(true);
+        loginInfo = (String) declaredField.get(login);
       } catch (Exception ex) {
-        log.info("parse platform error !!! , the packet is {}", cdtpPacket,
+        log.info("parse {} error !!! , the packet is {}", field, cdtpPacket,
             ex);
+        if (errorHandler != null) {
+          errorHandler.accept(ex);
+        }
       }
     }
-    return platform == null ? "" : platform;
+    return loginInfo == null ? "" : loginInfo;
   }
 
   private CDTPPacket loginFailure(CDTPPacket reqPacket, Response response) {

@@ -42,6 +42,9 @@ public class TemailAccoutLocation {
   //平台,pc,android，ios
   private String platform;
 
+  //版本信息
+  private String appVer;
+
   // 持有客户端链句柄的服务实例宿主机地址
   private String hostOf;
 
