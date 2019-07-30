@@ -111,9 +111,10 @@ public class SessionServiceImpl extends AbstractSessionService {
     CDTPPacket respPacket = new CDTPPacket(reqPacket);
     String temail = reqPacket.getHeader().getSender();
     String deviceId = reqPacket.getHeader().getDeviceId();
-    String platform = getLoginInfoFromCdtpPacket(reqPacket, "platform", null);
-    String appVer = getLoginInfoFromCdtpPacket(reqPacket, "appVer", null);
-    remoteStatusService.addSession(new AccountInfo(temail, deviceId, platform, appVer), responseConsumer);
+    AccountInfo accountInfo = getLoginInfoFromCdtpPacket(reqPacket);
+    remoteStatusService
+        .addSession(new AccountInfo(temail, deviceId, accountInfo.getPlatform(), accountInfo.getAppVer()),
+            responseConsumer);
     // 返回成功的消息
     CDTPLoginResp.Builder builder = CDTPLoginResp.newBuilder();
     builder.setCode(response == null ? HttpStatus.OK.value() : response.getCode());
@@ -128,12 +129,9 @@ public class SessionServiceImpl extends AbstractSessionService {
 
   /**
    * @param cdtpPacket ths cdtp packet
-   * @param field the field your want to get from the cdtppacket, please see field name in CDTPLogin
-   * @param errorHandler some things to do when get info error，if this is null, we will do nothing
    */
-  private String getLoginInfoFromCdtpPacket(CDTPPacket cdtpPacket, String field,
-      Consumer<Exception> errorHandler) {
-    String loginInfo = null;
+  private AccountInfo getLoginInfoFromCdtpPacket(CDTPPacket cdtpPacket) {
+    AccountInfo accountInfo = new AccountInfo();
     if (cdtpPacket.getCommandSpace() == CommandSpaceType.CHANNEL_CODE &&
         cdtpPacket.getCommand() == CommandType.LOGIN.getCode()) {
       try {
@@ -145,18 +143,21 @@ public class SessionServiceImpl extends AbstractSessionService {
         byte[] cdtpLoginBytes = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(cdtpLoginBytes);
         CDTPLogin login = CDTPLogin.parseFrom(cdtpLoginBytes);
-        Field declaredField = login.getClass().getDeclaredField(field);
-        declaredField.setAccessible(true);
-        loginInfo = (String) declaredField.get(login);
-      } catch (Exception ex) {
-        log.info("parse {} error !!! , the packet is {}", field, cdtpPacket,
-            ex);
-        if (errorHandler != null) {
-          errorHandler.accept(ex);
+        String platform = login.getPlatform();
+        if (platform != null) {
+          accountInfo.setPlatform(platform);
         }
+        String appVer = login.getAppVer();
+        if (appVer != null) {
+          accountInfo.setAppVer(appVer);
+        }
+        log.info("parsed login info is {}", accountInfo);
+      } catch (Exception ex) {
+        log.info("parse login info error !!! , the packet is {}", cdtpPacket,
+            ex);
       }
     }
-    return loginInfo == null ? "" : loginInfo;
+    return accountInfo;
   }
 
   private CDTPPacket loginFailure(CDTPPacket reqPacket, Response response) {
