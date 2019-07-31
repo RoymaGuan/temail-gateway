@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 project_git=$1
 project_name=$2
