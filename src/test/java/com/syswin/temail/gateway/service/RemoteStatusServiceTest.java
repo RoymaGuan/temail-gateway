@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 import com.syswin.temail.gateway.TemailGatewayProperties;
 import com.syswin.temail.gateway.TemailGatewayProperties.Rocketmq;
 import com.syswin.temail.gateway.channels.ChannelsSyncClient;
+import com.syswin.temail.gateway.entity.AccountInfo;
 import com.syswin.temail.gateway.entity.TemailAccoutLocation;
 import com.syswin.temail.gateway.entity.TemailAccoutLocations;
 import com.syswin.temail.ps.server.entity.Session;
@@ -102,7 +103,7 @@ public class RemoteStatusServiceTest {
 
   private TemailAccoutLocation buildAcctSts(String temail, String deviceId) {
     TemailGatewayProperties.Instance instance = properties.getInstance();
-    return new TemailAccoutLocation(temail, deviceId, "",
+    return new TemailAccoutLocation(temail, deviceId, "ios", "2.5.0",
         instance.getHostOf(), instance.getProcessId(),
         properties.getRocketmq().getMqTopic(), instance.getMqTag());
   }
@@ -133,7 +134,7 @@ public class RemoteStatusServiceTest {
 
   @Test
   public void testAddSessions() {
-    remoteStatusService.addSession("zhangsan", "ios110", "ios", x -> {
+    remoteStatusService.addSession(new AccountInfo("zhangsan", "ios110", "ios", "2.5.0"), x -> {
     });
   }
 

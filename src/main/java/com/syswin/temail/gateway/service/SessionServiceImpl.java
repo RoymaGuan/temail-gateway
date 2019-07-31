@@ -27,6 +27,7 @@ package com.syswin.temail.gateway.service;
 
 import static com.syswin.temail.ps.server.utils.SignatureUtil.resetSignature;
 
+import com.syswin.temail.gateway.entity.AccountInfo;
 import com.syswin.temail.gateway.entity.Response;
 import com.syswin.temail.ps.common.entity.CDTPPacket;
 import com.syswin.temail.ps.common.entity.CDTPProtoBuf.CDTPLogin;
@@ -37,6 +38,7 @@ import com.syswin.temail.ps.server.entity.Session;
 import com.syswin.temail.ps.server.service.AbstractSessionService;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -109,8 +111,10 @@ public class SessionServiceImpl extends AbstractSessionService {
     CDTPPacket respPacket = new CDTPPacket(reqPacket);
     String temail = reqPacket.getHeader().getSender();
     String deviceId = reqPacket.getHeader().getDeviceId();
-    String platform = getPlatform(reqPacket);
-    remoteStatusService.addSession(temail, deviceId, platform, responseConsumer);
+    AccountInfo accountInfo = getLoginInfoFromCdtpPacket(reqPacket);
+    remoteStatusService
+        .addSession(new AccountInfo(temail, deviceId, accountInfo.getPlatform(), accountInfo.getAppVer()),
+            responseConsumer);
     // 返回成功的消息
     CDTPLoginResp.Builder builder = CDTPLoginResp.newBuilder();
     builder.setCode(response == null ? HttpStatus.OK.value() : response.getCode());
@@ -122,8 +126,12 @@ public class SessionServiceImpl extends AbstractSessionService {
     return respPacket;
   }
 
-  private String getPlatform(CDTPPacket cdtpPacket) {
-    String platform = null;
+
+  /**
+   * @param cdtpPacket ths cdtp packet
+   */
+  private AccountInfo getLoginInfoFromCdtpPacket(CDTPPacket cdtpPacket) {
+    AccountInfo accountInfo = new AccountInfo();
     if (cdtpPacket.getCommandSpace() == CommandSpaceType.CHANNEL_CODE &&
         cdtpPacket.getCommand() == CommandType.LOGIN.getCode()) {
       try {
@@ -135,13 +143,21 @@ public class SessionServiceImpl extends AbstractSessionService {
         byte[] cdtpLoginBytes = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(cdtpLoginBytes);
         CDTPLogin login = CDTPLogin.parseFrom(cdtpLoginBytes);
-        platform = login.getPlatform();
+        String platform = login.getPlatform();
+        if (platform != null) {
+          accountInfo.setPlatform(platform);
+        }
+        String appVer = login.getAppVer();
+        if (appVer != null) {
+          accountInfo.setAppVer(appVer);
+        }
+        log.info("parsed login info is {}", accountInfo);
       } catch (Exception ex) {
-        log.info("parse platform error !!! , the packet is {}", cdtpPacket,
+        log.info("parse login info error !!! , the packet is {}", cdtpPacket,
             ex);
       }
     }
-    return platform == null ? "" : platform;
+    return accountInfo;
   }
 
   private CDTPPacket loginFailure(CDTPPacket reqPacket, Response response) {

@@ -212,6 +212,7 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
                 .setAccount(lc.getAccount())
                 .setDevId(lc.getDevId())
                 .setPlatform(lc.getPlatform())
+                .setAppVer(lc.getAppVer())
                 .setHostOf(lc.getHostOf())
                 .setProcessId(lc.getProcessId())
                 .setMqTopic(lc.getMqTopic())

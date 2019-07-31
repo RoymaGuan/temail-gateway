@@ -29,6 +29,7 @@ import static java.util.Collections.singletonList;
 import com.syswin.temail.gateway.TemailGatewayProperties;
 import com.syswin.temail.gateway.TemailGatewayProperties.Instance;
 import com.syswin.temail.gateway.channels.ChannelsSyncClient;
+import com.syswin.temail.gateway.entity.AccountInfo;
 import com.syswin.temail.gateway.entity.TemailAccoutLocation;
 import com.syswin.temail.gateway.entity.TemailAccoutLocations;
 import com.syswin.temail.ps.server.entity.Session;
@@ -61,18 +62,18 @@ public class RemoteStatusService {
     this.pendingTaskQueue.run();
   }
 
-  public void addSession(String temail, String deviceId, String platform, Consumer<Boolean> consumer) {
-    updSessionByType(temail, deviceId, platform, TemailAcctUptOptType.add, consumer);
+  public void addSession(AccountInfo accountInfo, Consumer<Boolean> consumer) {
+    updSessionByType(accountInfo, TemailAcctUptOptType.add, consumer);
   }
 
   public void removeSession(String temail, String deviceId, Consumer<Boolean> consumer) {
-    updSessionByType(temail, deviceId, "", TemailAcctUptOptType.del, consumer);
+    updSessionByType(new AccountInfo(temail, deviceId, "", ""), TemailAcctUptOptType.del, consumer);
   }
 
-  private void updSessionByType(String temail, String deviceId, String platform, TemailAcctUptOptType optType,
+  private void updSessionByType(AccountInfo accountInfo, TemailAcctUptOptType optType,
       Consumer<Boolean> consumer) {
     reqUpdSts4Upd(
-        new TemailAccoutLocations(singletonList(buildAcctSts(temail, deviceId, platform))),
+        new TemailAccoutLocations(singletonList(buildAcctSts(accountInfo))),
         optType,
         consumer);
   }
@@ -83,15 +84,17 @@ public class RemoteStatusService {
     }
     List<TemailAccoutLocation> statuses = new ArrayList<>(sessions.size());
     String platform = "";
+    String appVer = "";
     for (Session session : sessions) {
-      statuses.add(buildAcctSts(session.getTemail(), session.getDeviceId(), platform));
+      statuses.add(buildAcctSts(new AccountInfo(session.getTemail(), session.getDeviceId(), platform, appVer)));
     }
     reqUpdSts4Upd(new TemailAccoutLocations(statuses), TemailAcctUptOptType.del, consumer);
   }
 
-  private TemailAccoutLocation buildAcctSts(String temail, String deviceId, String platform) {
+  private TemailAccoutLocation buildAcctSts(AccountInfo accountInfo) {
     Instance instance = properties.getInstance();
-    return new TemailAccoutLocation(temail, deviceId, platform,
+    return new TemailAccoutLocation(accountInfo.getAccount(), accountInfo.getDevId(), accountInfo.getPlatform(),
+        accountInfo.getAppVer(),
         instance.getHostOf(), instance.getProcessId(),
         properties.getRocketmq().getMqTopic(), instance.getMqTag());
   }
