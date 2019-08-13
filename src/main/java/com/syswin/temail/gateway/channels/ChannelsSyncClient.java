@@ -24,12 +24,20 @@
 
 package com.syswin.temail.gateway.channels;
 
+import com.syswin.temail.gateway.entity.TemailAccoutLocation;
 import com.syswin.temail.gateway.entity.TemailAccoutLocations;
+import java.util.List;
 
 /**
  * channels sync interface
  */
 public interface ChannelsSyncClient {
+
+  /**
+   * get location by temail
+   * @param temail
+   */
+  List<TemailAccoutLocation> locationLocations(String temail);
 
   /**
    * init client

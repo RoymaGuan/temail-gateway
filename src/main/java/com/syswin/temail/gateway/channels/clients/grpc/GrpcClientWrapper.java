@@ -29,7 +29,10 @@ import com.syswin.temail.channel.grpc.servers.ChannelLocations;
 import com.syswin.temail.channel.grpc.servers.GatewayServer;
 import com.syswin.temail.gateway.TemailGatewayProperties;
 import com.syswin.temail.gateway.channels.ChannelsSyncClient;
+import com.syswin.temail.gateway.entity.TemailAccoutLocation;
 import com.syswin.temail.gateway.entity.TemailAccoutLocations;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -115,7 +118,7 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
       return grpcClientReference.get().serverRegistry(gatewayServer);
     } catch (Exception e) {
       log.error("Exception happened while try to registry: {} to grpcServer.",
-          gatewayServer.toString() ,e);
+          gatewayServer.toString(), e);
       reconnect();
       return false;
     }
@@ -130,7 +133,7 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
       //even fail, the server offLine will be executed by channel server
       //when heart beat timeout so do not try to reconnect again.
       log.error("Exception happened while offLine gatewayServer: {}.",
-          gatewayServer.toString() ,e);
+          gatewayServer.toString(), e);
       return false;
     }
   }
@@ -203,6 +206,10 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
     return this.removeChannelLocations(builder.build());
   }
 
+  @Override
+  public List<TemailAccoutLocation> locationLocations(String temail) {
+    return new ArrayList<>();
+  }
 
   private void extractGrpcLocations(TemailAccoutLocations channelLocations,
       ChannelLocations.Builder builder) {

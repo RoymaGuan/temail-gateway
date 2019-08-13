@@ -60,11 +60,13 @@ import com.syswin.temail.gateway.client.GatewayIntegrationTest.ChannelSyncConfig
 import com.syswin.temail.gateway.containers.RocketMqBrokerContainer;
 import com.syswin.temail.gateway.containers.RocketMqNameServerContainer;
 import com.syswin.temail.gateway.entity.Response;
+import com.syswin.temail.gateway.entity.TemailAccoutLocation;
 import com.syswin.temail.gateway.entity.TemailAccoutLocations;
 import com.syswin.temail.gateway.service.PacketEncoder;
 import com.syswin.temail.ps.common.entity.CDTPPacket;
 import com.syswin.temail.ps.common.entity.CDTPPacketTrans;
 import com.syswin.temail.ps.common.entity.CDTPProtoBuf.CDTPLoginResp;
+import java.util.List;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
@@ -113,15 +115,15 @@ public class GatewayIntegrationTest {
 
   private static final Network NETWORK = Network.newNetwork();
   private static final RocketMqNameServerContainer rocketMqNameSrv = new RocketMqNameServerContainer()
-        .withNetwork(NETWORK)
-        .withNetworkAliases(NAMESRV)
-        .withFixedExposedPort(MQ_SERVER_PORT, MQ_SERVER_PORT);
+      .withNetwork(NETWORK)
+      .withNetworkAliases(NAMESRV)
+      .withFixedExposedPort(MQ_SERVER_PORT, MQ_SERVER_PORT);
 
   private static final RocketMqBrokerContainer rocketMqBroker = new RocketMqBrokerContainer()
-        .withNetwork(NETWORK)
-        .withEnv("NAMESRV_ADDR", "namesrv:" + MQ_SERVER_PORT)
-        .withFixedExposedPort(10909, 10909)
-        .withFixedExposedPort(10911, 10911);
+      .withNetwork(NETWORK)
+      .withEnv("NAMESRV_ADDR", "namesrv:" + MQ_SERVER_PORT)
+      .withFixedExposedPort(10909, 10909)
+      .withFixedExposedPort(10911, 10911);
 
   @ClassRule
   public static RuleChain rules = RuleChain.outerRule(rocketMqNameSrv).around(rocketMqBroker);
@@ -222,9 +224,15 @@ public class GatewayIntegrationTest {
   @Configuration
   @Profile("dev")
   static class ChannelSyncConfig {
+
     @Bean
     ChannelsSyncClient client() {
       return new ChannelsSyncClient() {
+        @Override
+        public List<TemailAccoutLocation> locationLocations(String temail) {
+          return null;
+        }
+
         @Override
         public void initClient() {
 
