@@ -48,7 +48,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 
 
-public class TemailGatewayApplication {
+@SpringBootApplication
+public class TemailGatewayApplication extends SpringBootServletInitializer {
 
   public static void main(String[] args) {
     SpringApplication.run(TemailGatewayApplication.class, args);
