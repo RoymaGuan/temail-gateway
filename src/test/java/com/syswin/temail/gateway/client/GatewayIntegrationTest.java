@@ -228,10 +228,6 @@ public class GatewayIntegrationTest {
     @Bean
     ChannelsSyncClient client() {
       return new ChannelsSyncClient() {
-        @Override
-        public List<TemailAccoutLocation> locationLocations(String temail) {
-          return null;
-        }
 
         @Override
         public void initClient() {

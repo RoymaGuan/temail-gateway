@@ -206,11 +206,6 @@ public class GrpcClientWrapper implements GrpcClient, ChannelsSyncClient {
     return this.removeChannelLocations(builder.build());
   }
 
-  @Override
-  public List<TemailAccoutLocation> locationLocations(String temail) {
-    return new ArrayList<>();
-  }
-
   private void extractGrpcLocations(TemailAccoutLocations channelLocations,
       ChannelLocations.Builder builder) {
     channelLocations.getStatuses().forEach(lc ->

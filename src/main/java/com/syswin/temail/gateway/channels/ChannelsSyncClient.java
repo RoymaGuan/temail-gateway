@@ -33,11 +33,6 @@ import java.util.List;
  */
 public interface ChannelsSyncClient {
 
-  /**
-   * get location by temail
-   * @param temail
-   */
-  List<TemailAccoutLocation> locationLocations(String temail);
 
   /**
    * init client
