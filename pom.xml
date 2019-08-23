@@ -39,7 +39,7 @@
 
   <!--properties-->
   <properties>
-    <ps.version>1.2.14</ps.version>
+    <ps.version>1.2.15-SNAPSHOT</ps.version>
     <netty.version>4.1.27.Final</netty.version>
     <disconf-client.version>2.6.36</disconf-client.version>
     <rocketmq-client.version>4.3.0</rocketmq-client.version>
